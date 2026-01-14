@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"  # Host:Container
+    volumes:
+      - ./api:/code/api:cached  # ':cached' makes application reload faster
+      - ./tests:/code/tests:cached
+    depends_on:
+      - db
+    environment:
+      - DB_USER=${USER:-root}  # Default to 'root' if USER is not set in .env file
+      - DB_PASSWORD=${PASSWORD:-password}  # Default to 'password' if PASSWORD is not set in .env file
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=${DATABASE:-digicheese}  # Default to 'digicheese' if DATABASE is not set in .env file
+
+
+  db:
+    image: mariadb:10.6
+    container_name: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-securepassword}  # Default to 'securepassword' if MYSQL_ROOT_PASSWORD is not set in .env file
+      MYSQL_DATABASE: ${DATABASE:-digicheese}  # Default to 'digicheese' if DATABASE is not set in .env file
+      MYSQL_USER: ${USER:-admin}  # Default to 'admin' if USER is not set in .env file
+      MYSQL_PASSWORD: ${PASSWORD:-Admin123!}  # Default to 'Admin123!' if PASSWORD is not set in .env file
+    ports:
+      - "${PORT_DB_VISUALISATION:-3307}:3306"  # Default to 3307 if PORT_DB_VISUALISATION is not set in .env file
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8070:8080  # Redirect port 80 to 8080 (HTTP) because of Apache
+    
+
+volumes:
+  mariadb_data:
