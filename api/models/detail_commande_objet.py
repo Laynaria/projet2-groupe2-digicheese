@@ -6,7 +6,7 @@ class DetailCommandeObjet(Base):
 
 	idDetailCommandeObjet = Column(Integer,primary_key=True)
 	detailleCommande_id = Column(Integer,ForeignKey('detail_commande.idDetailCommande'))
-	objet_id = Column(Integer,ForeignKey('objet.idDetailCommande'))
+	objet_id = Column(Integer,ForeignKey('objet.idObjet'))
 
 
 	# __table_args__ = (Index('commmande_index', "cdeComt", "codcli"),)
