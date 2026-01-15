@@ -3,7 +3,7 @@ from .base import Base
 
 
 class Objet(Base):
-	__tablename__ = "t_objet"
+	__tablename__ = "objet"
 
 	idObjet = Column(Integer,primary_key=True)
 	libelle = Column(String(50), default=None)
