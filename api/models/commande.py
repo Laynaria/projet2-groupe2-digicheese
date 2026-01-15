@@ -12,6 +12,7 @@ class Commande(Base):
 	commentaireCommande = Column(String(255), default=None)
 	nbColis = Column(Integer)
 	bArchive = Column(Boolean)
+	client_id = Column(Integer,ForeignKey('client.idClient'))
 	conditionnement_id = Column(Integer,ForeignKey('conditionnement.idConditionnement'))
 
 	# __table_args__ = (Index('commmande_index', "cdeComt", "codcli"),)
