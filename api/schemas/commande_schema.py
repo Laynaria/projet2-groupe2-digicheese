@@ -30,7 +30,7 @@ class CommandePatch(CommandeBase):
 	client_id: Optional[int] = None
 	conditionnement_id: Optional[int] = None
 
-class ClientInDB(CommandeBase):
+class CommandeInDB(CommandeBase):
 	"""Schema for commande data stored in Database"""
 	idCommande: int
 
