@@ -16,6 +16,11 @@ def seed_utilisateurs(nb_users: int = 10):
 
     db: Session = SessionLocal()
     try:
+        count = db.query(Utilisateur).count()
+        if count > 1:
+            print("Table utilisateur déjà seedée")
+            return
+
         roles = ["OP-colis", "OP-stocks"]
 
         for _ in range(nb_users):

@@ -1,11 +1,13 @@
 import os
 from sqlalchemy.orm import Session
 
-from api.database import SessionLocal
-from api.models.role import Role
+from ..database import SessionLocal
+from ..models import Role
 
 
 def seed_roles():
+    print("Bienvenue dans seed role")
+
     if os.getenv("SEED_ADMIN", "false").lower() != "true":
         print("SEED_ADMIN désactivé — seed roles ignoré")
         return
