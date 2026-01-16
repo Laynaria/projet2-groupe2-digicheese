@@ -6,7 +6,7 @@ class RoleRead(BaseModel):
     libelleRole: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UtilisateurBase(BaseModel):
     nomUtil: str
@@ -29,7 +29,7 @@ class UtilisateurRead(UtilisateurBase):
     roles: List[RoleRead] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Schémas pour l’auth
 class Token(BaseModel):

@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   fastapi:
     build:
@@ -18,7 +16,9 @@ services:
       - DB_HOST=db
       - DB_PORT=3306
       - DB_NAME=${DATABASE:-digicheese}  # Default to 'digicheese' if DATABASE is not set in .env file
-
+      - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
 
   db:
     image: mariadb:10.6

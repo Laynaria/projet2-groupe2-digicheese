@@ -7,3 +7,4 @@ pytest
 httpx
 passlib
 python-jose
+email-validator
