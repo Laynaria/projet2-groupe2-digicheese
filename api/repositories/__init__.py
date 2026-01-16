@@ -1,2 +1,3 @@
 from .client_repository import ClientRepository
 from .commande_repository import CommandeRepository
+from .detail_commande_repository import DetailCommandeRepository
