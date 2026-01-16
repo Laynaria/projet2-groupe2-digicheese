@@ -27,6 +27,9 @@ services:
       - ADMIN_PRENOM=${ADMIN_PRENOM:-Admin}
       - SEED_NB_OBJETS=${SEED_NB_OBJETS:-20}
 
+      - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
 
   db:
     image: mariadb:10.6
