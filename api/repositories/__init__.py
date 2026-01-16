@@ -1,2 +1,2 @@
 from .client_repository import ClientRepository
-from .commande_repository import CommandeRepository
+from .objet_repository import ObjetRepository
