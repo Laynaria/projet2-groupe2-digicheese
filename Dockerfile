@@ -13,5 +13,7 @@ EXPOSE 80
 
 # Start the application
 # 0.0.0.0 -> allows listening on all network interfaces (so it is accessible externally)
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "80", "--reload", "--reload-dir", "api"]
+# CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "80", "--reload", "--reload-dir", "api"]
 # '--reload-dir' allows more efficient monitoring of changes in the 'api' directory for faster updates
+COPY entrypoint.sh /code/entrypoint.sh
+CMD ["/bin/sh", "/code/entrypoint.sh"]
