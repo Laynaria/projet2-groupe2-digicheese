@@ -10,8 +10,8 @@ class CommandeService:
     def __init__(self):
         self.repository = CommandeRepository()
 
-    def __traitement(self, client: dict):
-        return client
+    def __traitement(self, commande: dict):
+        return commande
     
     def get_all_commandes(self, db: Session):
         return self.repository.get_all_commandes(db)

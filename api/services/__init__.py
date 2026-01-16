@@ -1,2 +1,3 @@
 from .client_service import ClientService
 from .commande_service import CommandeService
+from .detail_commande_service import DetailCommandeService
