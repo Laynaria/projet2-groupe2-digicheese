@@ -1,10 +1,10 @@
 from pydantic import BaseModel
-from pydantic_extra_types.pendulum_dt import Date
+from datetime import date
 from typing import Optional
 
 class CommandeBase(BaseModel):
 	"""Base schema for commande data."""
-	date: Date
+	date: date
 	timbreClient: float
 	timbreCode: float
 	chequeClient: float
