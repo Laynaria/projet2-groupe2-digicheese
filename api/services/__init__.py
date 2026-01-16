@@ -1,5 +1,6 @@
 from .client_service import ClientService
 from .objet_service import ObjetService
+from .objet_service import ObjetService
 from .commande_service import CommandeService
 from .conditionnement_service import ConditionnementService
 from .detail_commande_service import DetailCommandeService
