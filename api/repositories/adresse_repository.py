@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 
 from api.models.adresse import Adresse
 
-
 def get_adresse(db: Session, adresse_id: int) -> Optional[Adresse]:
     return db.query(Adresse).filter(Adresse.idAdresse == adresse_id).first()
 

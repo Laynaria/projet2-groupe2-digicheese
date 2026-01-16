@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 
 from api.models.commune import Commune
 
-
 def get_commune(db: Session, commune_id: int) -> Optional[Commune]:
     return db.query(Commune).filter(Commune.idCommune == commune_id).first()
 

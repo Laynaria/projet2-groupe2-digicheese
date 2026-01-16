@@ -1,4 +1,4 @@
-from .client_service import ClientService
+from .client_service import create_client, update_client, delete_client, list_clients
 from .objet_service import ObjetService
 from .objet_service import ObjetService
 from .commande_service import CommandeService
