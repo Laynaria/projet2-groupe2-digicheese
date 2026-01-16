@@ -7,3 +7,4 @@ from .utilisateur_schema import (
     Token,
     TokenData,
 )
+from .commande_schema import CommandePost, CommandePatch, CommandeInDB

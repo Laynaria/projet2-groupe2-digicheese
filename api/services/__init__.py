@@ -12,3 +12,5 @@ from .utilisateur_service import (
     delete_utilisateur,
     list_utilisateurs,
 )
+
+from .commande_service import CommandeService

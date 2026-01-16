@@ -10,3 +10,5 @@ from .utilisateur_repository import (
     get_role_by_id,
     set_roles_for_utilisateur,
 )
+
+from .commande_repository import CommandeRepository
