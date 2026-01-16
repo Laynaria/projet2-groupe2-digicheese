@@ -1,5 +1,6 @@
 from .client_repository import ClientRepository
 from .commande_repository import CommandeRepository
+from .conditionnement_repository import ConditionnementRepository
 from .detail_commande_repository import DetailCommandeRepository
 from .utilisateur_repository import (
     get_utilisateur,
