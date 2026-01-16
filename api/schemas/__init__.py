@@ -9,3 +9,4 @@ from .utilisateur_schema import (
     Token,
     TokenData,
 )
+from .role_schema import RoleCreate, RoleUpdate, RoleRead
