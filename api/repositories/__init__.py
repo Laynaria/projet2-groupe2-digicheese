@@ -12,3 +12,11 @@ from .utilisateur_repository import (
     get_role_by_id,
     set_roles_for_utilisateur,
 )
+from .role_repository import (
+    get_role,
+    get_role_by_name as get_role_by_name_repo,
+    list_roles,
+    create_role,
+    update_role,
+    delete_role,
+)
