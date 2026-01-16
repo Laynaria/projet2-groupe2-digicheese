@@ -1,4 +1,5 @@
 from .client_service import ClientService
+from .objet_service import ObjetService
 from .commande_service import CommandeService
 from .conditionnement_service import ConditionnementService
 from .detail_commande_service import DetailCommandeService
@@ -15,3 +16,5 @@ from .utilisateur_service import (
     delete_utilisateur,
     list_utilisateurs,
 )
+from .role_service import create_role, list_roles, update_role, delete_role
+from .commune_service import create_commune, update_commune, delete_commune, list_communes
