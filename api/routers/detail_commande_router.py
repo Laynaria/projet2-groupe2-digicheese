@@ -10,10 +10,10 @@ from ..schemas import DetailCommandePost, DetailCommandePatch, DetailCommandeInD
 from ..database import get_db
 from ..services import DetailCommandeService
 
-# Create a router for commande-related endpoints
+# Create a router for detail_commande-related endpoints
 router = APIRouter(prefix="/detail-commande", tags=["detail_commande"])
 
-# Initialize the commande service to have acces to commande operations
+# Initialize the detail_commande service to have acces to commande operations
 service = DetailCommandeService()
 
 @router.get("/", status_code=200, response_model=list[DetailCommandeInDB])
