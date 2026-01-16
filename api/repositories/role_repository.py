@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session
 from api.models.role import Role
 from api.models.utilisateur_role import UtilisateurRole
 
-
 def get_role(db: Session, role_id: int) -> Optional[Role]:
     return db.query(Role).filter(Role.idRole == role_id).first()
 

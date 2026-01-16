@@ -1,4 +1,11 @@
-from .client_repository import ClientRepository
+from .client_repository import (
+    get_client,
+    get_client_by_email,
+    list_clients,
+    create_client,
+    update_client,
+    delete_client,
+)
 from .objet_repository import ObjetRepository
 from .objet_repository import ObjetRepository
 from .commande_repository import CommandeRepository
