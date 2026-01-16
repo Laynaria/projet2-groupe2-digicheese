@@ -11,10 +11,10 @@ class ConditionnementRepository:
     def get_all_conditionnements(self, db: Session):
         return list(db.query(Conditionnement).all())
     
-    def get_conditionnements_by_id(self, db: Session, id: int):
+    def get_conditionnement_by_id(self, db: Session, id: int):
         return db.query(Conditionnement).get(id)
     
-    def create_conditionnements(self, db: Session, data_conditionnement: dict):
+    def create_conditionnement(self, db: Session, data_conditionnement: dict):
         conditionnement = Conditionnement(**data_conditionnement)
         db.add(conditionnement)
         db.commit()
