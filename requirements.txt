@@ -5,3 +5,6 @@ pymysql
 python-dotenv
 pytest
 httpx
+passlib
+python-jose
+email-validator
