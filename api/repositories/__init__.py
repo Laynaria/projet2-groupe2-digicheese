@@ -21,3 +21,11 @@ from .role_repository import (
     update_role,
     delete_role,
 )
+from .commune_repository import (
+    get_commune,
+    get_commune_by_cp_and_nom,
+    list_communes,
+    create_commune,
+    update_commune,
+    delete_commune,
+)
