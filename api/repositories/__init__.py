@@ -31,3 +31,11 @@ from .commune_repository import (
     update_commune,
     delete_commune,
 )
+from .adresse_repository import (
+    get_adresse,
+    list_adresses,
+    create_adresse,
+    update_adresse,
+    delete_adresse,
+)
+
