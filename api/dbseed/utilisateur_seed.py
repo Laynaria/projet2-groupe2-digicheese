@@ -11,7 +11,7 @@ fake = Faker("fr_FR")
 
 def seed_utilisateurs(nb_users: int = 10):
     if os.getenv("SEED_USERS", "false").lower() != "true":
-        print("SEED_USERS désactivé — seed utilisateurs ignoré")
+        print("SEED_USERS désactivé")
         return
 
     db: Session = SessionLocal()
