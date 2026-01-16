@@ -1,4 +1,4 @@
-from .client_schema import ClientPost, ClientPatch, ClientInDB
+from .client_schema import ClientCreate, ClientUpdate, ClientRead
 from .objet_schema import ObjetPost, ObjetPatch, ObjetInDB
 from .objet_schema import ObjetPost, ObjetPatch, ObjetInDB
 from .commande_schema import CommandePost, CommandePatch, CommandeInDB

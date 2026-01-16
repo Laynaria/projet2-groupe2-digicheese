@@ -1,34 +1,32 @@
-from pydantic import BaseModel
 from typing import Optional
+from pydantic import BaseModel, EmailStr
 
 
 class ClientBase(BaseModel):
-    """Base schema for client data."""
-    nom: str
-    prenom: str
+    nomClient: str
+    prenomClient: str
     genre: Optional[str] = None
-    adresse: str
-    complement_adresse: Optional[str] = None
-    tel: Optional[str] = None
-    email: Optional[str] = None
-    newsletter: Optional[int] = 0
+    emailClient: EmailStr
+    telephone: Optional[str] = None
 
 
-class ClientPost(ClientBase):
-    """Schema for creating a new client."""
+class ClientCreate(ClientBase):
+    """Données nécessaires à la création d'un client."""
     pass
 
 
-class ClientPatch(ClientBase):
-    """Schema for updating an existing client."""
-    nom: Optional[str] = None
-    prenom: Optional[str] = None
-    adresse: Optional[str] = None
+class ClientUpdate(BaseModel):
+    """Champs modifiables pour un client."""
+    nomClient: Optional[str] = None
+    prenomClient: Optional[str] = None
+    genre: Optional[str] = None
+    emailClient: Optional[EmailStr] = None
+    telephone: Optional[str] = None
 
 
-class ClientInDB(ClientBase):
-    """Schema for client data stored in the database."""
-    codcli: int
-    
+class ClientRead(ClientBase):
+    """Client renvoyé par l'API."""
+    idClient: int
+
     class Config:
         from_attributes = True
