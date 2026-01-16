@@ -11,3 +11,4 @@ from .utilisateur_schema import (
     TokenData,
 )
 from .role_schema import RoleCreate, RoleUpdate, RoleRead
+from .commune_schema import CommuneCreate, CommuneUpdate, CommuneRead
