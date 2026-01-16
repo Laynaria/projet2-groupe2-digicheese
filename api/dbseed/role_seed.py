@@ -10,23 +10,22 @@ def seed_roles():
         print("SEED_ADMIN désactivé — seed roles ignoré")
         return
 
-    roles_a_creer = ["Admin", "OP-colis", "OP-stocks"]
+    roles = ["Admin", "OP-colis", "OP-stocks"]
 
     db: Session = SessionLocal()
     try:
-        # Idempotence: on regarde ce qui existe déjà
-        existants = {
-            r.libelleRole for r in db.query(Role).filter(Role.libelleRole.in_(roles_a_creer)).all()
+        existing = {
+            r.libelleRole for r in db.query(Role).filter(Role.libelleRole.in_(roles)).all()
         }
 
-        manquants = [r for r in roles_a_creer if r not in existants]
-        if not manquants:
+        misssing = [r for r in roles if r not in existing]
+        if not misssing:
             print("Rôles déjà seedés")
             return
 
-        db.add_all([Role(libelleRole=lib) for lib in manquants])
+        db.add_all([Role(libelleRole=lib) for lib in misssing])
         db.commit()
-        print(f"Seed roles terminé: {len(manquants)} ajoutés")
+        print(f"Seed roles terminé")
 
     except Exception:
         db.rollback()

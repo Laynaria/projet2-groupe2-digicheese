@@ -25,6 +25,7 @@ services:
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-Admin123!}
       - ADMIN_NOM=${ADMIN_NOM:-Root}
       - ADMIN_PRENOM=${ADMIN_PRENOM:-Admin}
+      - SEED_USERS=${SEED_USERS:-false}
       - SEED_NB_OBJETS=${SEED_NB_OBJETS:-20}
 
       - SECRET_KEY=${SECRET_KEY}

@@ -27,7 +27,7 @@ def seed_admin_user():
 
         role_admin = db.query(Role).filter(Role.libelleRole == "Admin").first()
         if not role_admin:
-            raise Exception("Rôle 'Admin' introuvable. Exécuter seed_roles() avant seed_admin_user().")
+            raise Exception("Rôle 'Admin' introuvable.")
 
         admin = Utilisateur(
             nomUtil=nom,
