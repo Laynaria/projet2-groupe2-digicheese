@@ -17,3 +17,4 @@ from .utilisateur_service import (
 )
 from .role_service import create_role, list_roles, update_role, delete_role
 from .commune_service import create_commune, update_commune, delete_commune, list_communes
+from .adresse_service import create_adresse, update_adresse, delete_adresse, list_adresses

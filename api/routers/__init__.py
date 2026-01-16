@@ -7,6 +7,7 @@ from .commande_router import router as router_commande
 from .detail_commande_router import router as detail_commande_router
 from .role_router import router as role_router
 from .commune_router import router as commune_router
+from .adresse_router import router as adresse_router
 
 router = APIRouter(prefix="/api/v1")
 router.include_router(router_client)
@@ -17,3 +18,4 @@ router.include_router(auth_router)
 router.include_router(utilisateur_router)
 router.include_router(role_router)
 router.include_router(commune_router)
+router.include_router(adresse_router)
