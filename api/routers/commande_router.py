@@ -1,7 +1,7 @@
 """
-References all commande-reltard endpoints in the FastAPI application.
+References all commande-related endpoints in the FastAPI application.
 
-Receives requests from the commande router, transform in client schema and process them using our CommandeService.
+Receives requests from the commande router, transform in commande schema and process them using our CommandeService.
 """
 
 from fastapi import APIRouter, Depends, HTTPException
