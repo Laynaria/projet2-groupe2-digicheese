@@ -1,4 +1,6 @@
-from fastapi import APIRouter
+from api.routers.dependencies import get_current_utilisateur
+
+from fastapi import APIRouter, Depends
 from .auth_router import router as auth_router
 from .utilisateur_router import router as utilisateur_router
 from .client_router import router as router_client
@@ -12,14 +14,21 @@ from .commune_router import router as commune_router
 from .adresse_router import router as adresse_router
 
 router = APIRouter(prefix="/api/v1")
-router.include_router(router_client)
-router.include_router(router_objet)
-router.include_router(router_commande)
-router.include_router(router_conditionnement)
-router.include_router(router_detail_commande)
-router.include_router(router_detail_commande_objet)
 router.include_router(auth_router)
-router.include_router(utilisateur_router)
-router.include_router(role_router)
-router.include_router(commune_router)
-router.include_router(adresse_router)
+
+protected_router = APIRouter(
+    dependencies=[Depends(get_current_utilisateur)]
+)
+protected_router.include_router(router_client)
+protected_router.include_router(router_objet)
+protected_router.include_router(router_commande)
+protected_router.include_router(router_conditionnement)
+protected_router.include_router(router_detail_commande)
+protected_router.include_router(router_detail_commande_objet)
+protected_router.include_router(auth_router)
+protected_router.include_router(utilisateur_router)
+protected_router.include_router(role_router)
+protected_router.include_router(commune_router)
+protected_router.include_router(adresse_router)
+
+router.include_router(protected_router)
