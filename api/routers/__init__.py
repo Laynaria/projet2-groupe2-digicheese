@@ -12,6 +12,7 @@ from .detail_commande_objet_router import router as router_detail_commande_objet
 from .role_router import router as role_router
 from .commune_router import router as commune_router
 from .adresse_router import router as adresse_router
+from .rel_cond_router import router as rel_cond_router
 
 router = APIRouter(prefix="/api/v1")
 router.include_router(auth_router)
@@ -20,6 +21,7 @@ protected_router = APIRouter(
     dependencies=[Depends(get_current_utilisateur)]
 )
 protected_router.include_router(router_client)
+protected_router.include_router(rel_cond_router)
 protected_router.include_router(router_objet)
 protected_router.include_router(router_commande)
 protected_router.include_router(router_conditionnement)

@@ -3,19 +3,10 @@ from .objet_schema import ObjetPost, ObjetPatch, ObjetInDB
 from .commande_schema import CommandePost, CommandePatch, CommandeInDB
 from .conditionnement_schema import ConditionnementPost, ConditionnementPatch, ConditionnementInDB
 from .detail_commande_schema import DetailCommandePost, DetailCommandePatch, DetailCommandeInDB
-from .utilisateur_schema import (
-    UtilisateurCreate,
-    UtilisateurRead,
-    UtilisateurUpdate,
-    LoginRequest,
-    Token,
-    TokenData,
-)
+from .utilisateur_schema import (UtilisateurCreate, UtilisateurRead, UtilisateurUpdate, LoginRequest, Token, TokenData)
 from .role_schema import RoleCreate, RoleUpdate, RoleRead
 from .commune_schema import CommuneCreate, CommuneUpdate, CommuneRead
 from .adresse_schema import AdresseCreate, AdresseUpdate, AdresseRead
-from .detail_commande_objet_schema import (
-    DetailCommandeObjetCreate,
-    DetailCommandeObjetUpdate,
-    DetailCommandeObjetRead,
-)
+from .detail_commande_objet_schema import (DetailCommandeObjetCreate, DetailCommandeObjetUpdate, DetailCommandeObjetRead)
+from .rel_cond_schema import RelCondCreate, RelCondUpdate, RelCondRead
+

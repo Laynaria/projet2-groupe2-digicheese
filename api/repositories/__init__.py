@@ -8,3 +8,4 @@ from .role_repository import (get_role, get_role_by_name as get_role_by_name_rep
 from .commune_repository import (get_commune, get_commune_by_cp_and_nom, list_communes, create_commune, update_commune, delete_commune)
 from .adresse_repository import (get_adresse, list_adresses, create_adresse, update_adresse, delete_adresse)
 from .detail_commande_objet_repository import (get_detail_commande_objet, list_detail_commande_objets, create_detail_commande_objet, update_detail_commande_objet, delete_detail_commande_objet)
+from .rel_cond_repository import (get_rel_cond, list_rel_conds, create_rel_cond, update_rel_cond, delete_rel_cond)
