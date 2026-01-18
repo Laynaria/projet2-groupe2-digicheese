@@ -13,7 +13,7 @@ def seed_admin_user():
         print("SEED_ADMIN désactivé — seed admin ignoré")
         return
 
-    email = os.getenv("ADMIN_EMAIL", "admin@digicheese.local")
+    email = os.getenv("ADMIN_EMAIL", "admin@digicheese.com")
     password = os.getenv("ADMIN_PASSWORD", "Admin123!")
     nom = os.getenv("ADMIN_NOM", "Root")
     prenom = os.getenv("ADMIN_PRENOM", "Admin")

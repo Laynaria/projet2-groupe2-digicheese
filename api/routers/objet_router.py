@@ -1,12 +1,13 @@
-
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from ..schemas import ObjetPost, ObjetPatch, ObjetInDB
 from ..database import get_db
 from ..services import ObjetService
+from .dependencies import require_roles
 
 router = APIRouter(prefix="/objet", tags=["objet"])
+
+AdminOnly = require_roles("Admin")
 
 service = ObjetService()
 
@@ -24,12 +25,12 @@ def get_objet(objet_id: int, db: Session = Depends(get_db)):
     return objet
 
 
-@router.post("/", status_code=201, response_model=ObjetInDB)
+@router.post("/", status_code=201, response_model=ObjetInDB,dependencies=[Depends(AdminOnly)],)
 def create_objet(data_objet: ObjetPost, db: Session = Depends(get_db)):
     return service.create_objet(db, data_objet)
 
 
-@router.patch("/{objet_id}", status_code=200, response_model=ObjetInDB)
+@router.patch("/{objet_id}", status_code=200, response_model=ObjetInDB,  dependencies=[Depends(AdminOnly)],)
 def patch_objet(objet_id: int, data_objet: ObjetPatch, db: Session = Depends(get_db)):
     objet = service.get_objet_by_id(db, objet_id)
     if objet is None:
@@ -37,7 +38,7 @@ def patch_objet(objet_id: int, data_objet: ObjetPatch, db: Session = Depends(get
     return service.patch_objet(db, objet_id, data_objet)
 
 
-@router.delete("/{objet_id}", status_code=200, response_model=ObjetInDB)
+@router.delete("/{objet_id}", status_code=200, response_model=ObjetInDB,  dependencies=[Depends(AdminOnly)],)
 def delete_objet(objet_id: int, db: Session = Depends(get_db)):
     objet = service.get_objet_by_id(db, objet_id)
     if objet is None:
