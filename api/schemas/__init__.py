@@ -14,3 +14,8 @@ from .utilisateur_schema import (
 from .role_schema import RoleCreate, RoleUpdate, RoleRead
 from .commune_schema import CommuneCreate, CommuneUpdate, CommuneRead
 from .adresse_schema import AdresseCreate, AdresseUpdate, AdresseRead
+from .detail_commande_objet_schema import (
+    DetailCommandeObjetCreate,
+    DetailCommandeObjetUpdate,
+    DetailCommandeObjetRead,
+)
