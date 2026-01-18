@@ -4,6 +4,7 @@ from .role_seed import seed_roles
 from .utilisateur_seed import seed_utilisateurs
 from .conditionnement_seed import seed_conditionnement
 from .commande_seed import seed_commande
+from .detail_commande_seed import seed_detail_commande
 
 def init_seed():
     seed_roles()
@@ -12,3 +13,4 @@ def init_seed():
     seed_objets()
     seed_conditionnement()
     seed_commande()
+    seed_detail_commande()
