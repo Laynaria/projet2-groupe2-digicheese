@@ -21,22 +21,26 @@ def seed_communes():
             print("Table commune déjà seedée")
             return
 
-        communes = []
         for _ in range(nb):
-            communes.append(
-                Commune(
-                    cp=faker.postcode(),
-                    nom_commune=faker.city()[:100],
-                    departement=faker.department()[:100],
-                )
+            # Faker.department() peut renvoyer autre chose qu'une string
+            departement = faker.department()
+            departement = str(departement)[:100]
+
+            commune = Commune(
+                cp=faker.postcode(),
+                nom_commune=faker.city()[:100],
+                departement=departement,
             )
 
-        db.add_all(communes)
+            # 👉 insertion UNE PAR UNE (évite bug MariaDB + RETURNING)
+            db.add(commune)
+
         db.commit()
         print(f"Seed communes terminé ({nb})")
 
-    except Exception:
+    except Exception as e:
         db.rollback()
+        print("Erreur seed communes :", e)
         raise
     finally:
         db.close()

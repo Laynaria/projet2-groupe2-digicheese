@@ -32,29 +32,41 @@ def seed_adresses():
         if not clients:
             raise Exception("Aucun client en base — seed_adresses impossible.")
 
-        adresses = []
         for _ in range(nb):
             commune = random.choice(communes)
             client = random.choice(clients)
 
-            adresses.append(
-                Adresse(
-                    compAdresse1=faker.secondary_address()[:255] if faker.boolean(chance_of_getting_true=25) else None,
-                    compAdresse2=None,
-                    compAdresse3=None,
-                    numeroVoie=str(faker.building_number())[:10],
-                    nomVoie=faker.street_name()[:255],
-                    idCommune=commune.idCommune,
-                    idClient=client.idClient,
-                )
+            # Complément d'adresse fake (secondary_address n'existe pas partout)
+            comp1 = None
+            if faker.boolean(chance_of_getting_true=25):
+                comp1 = faker.random_element(
+                    elements=[
+                        f"Bâtiment {faker.random_uppercase_letter()}",
+                        f"Appartement {faker.random_int(min=1, max=200)}",
+                        f"Résidence {faker.last_name()}",
+                        f"Étage {faker.random_int(min=0, max=20)}",
+                    ]
+                )[:255]
+
+            adresse = Adresse(
+                compAdresse1=comp1,
+                compAdresse2=None,
+                compAdresse3=None,
+                numeroVoie=str(faker.building_number())[:10],
+                nomVoie=faker.street_name()[:255],
+                idCommune=commune.idCommune,
+                idClient=client.idClient,
             )
 
-        db.add_all(adresses)
+            # 👉 insertion une par une (évite bug MariaDB + insertmanyvalues/returning)
+            db.add(adresse)
+
         db.commit()
         print(f"Seed adresses terminé ({nb})")
 
-    except Exception:
+    except Exception as e:
         db.rollback()
+        print("Erreur seed adresses :", e)
         raise
     finally:
         db.close()
