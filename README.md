@@ -1,94 +1,136 @@
-# FastAPI-Docker
+# Digicheese
 
-This application is a fully containerized FastAPI application. It's an exemple of containerized api with python to manage client fidelity points of cheese factory in order to manage learning process of FastAPI and Docker to diginamic students.
+Digicheese est une application de fidélisation client d'une formagerie, permettant la gestion de colis de goodies à des clients.
 
 ## Introduction
 
-The build start with a **Dockerfile** that defines the FastAPI application and its dependencies like **requirements.txt**. The application is built and run using **Docker Compose**, which also starts a MariaDB container as the database and an Adminer container as web database visualizer.
+L'application Digicheese est une application python totalement dockerisée.
+
+Sa mise en place passe par trois fichiers clés:
+
+- la **Dockerfile** qui défini notre container d'API et de tests.
+- le **requirements.txt** qui liste les dépendences de notre application python.
+- le **docker-compose.yml** qui orchestre les différents containers dont notre application à besoin.
+
+Côté containerisation, nous aurons trois containers:
+
+- **fastapi**: contenant les fichiers de notre API et de nos Tests.
+- **mariadb**: contenant notre Base De Données.
+- **adminer**: permettant d'accéder à notre Base De Données plus facilement.
+
+## Technologies
+
+Pour réaliser ce projet, nous nous sommes basés sur les technologies suivantes:
+
+```bash
+- FastApi # Api.
+- Uvicorn # Serveur.
+- SqlAlchemy # ORM.
+- MariaDB # Base De Données.
+- Pytest # Environnement de Tests.
+- Faker # Création de fausses données.
+- Docker # Service de Containerisation.
+- Swagger # Interface Graphique autogénérée pour l'API.
+- Adminer # Interface Graphique pour accéder à la Base de Données.
+```
 
 ## Project Structure
 
 ```bash
 .
-├── api/                # Source code for the FastAPI application
-│   ├── main.py         # Entry point for the FastAPI app
-│   ├── database.py     # Database connection setup
-│   ├── models/         # SQLAlchemy models
-│   ├── repositories/   # Data access layer
-│   ├── services/       # Business logic layer
-│   ├── routers/        # API route definitions
-│   └── schemas/        # Pydantic schemas for data validation
+├── api/                # Dossier du Code source de l'API FastAPI
+│   ├── main.py         # Point d'entrée de notre API FastAPI
+│   ├── database.py     # Fichier de connexion à la BDD.
+│   ├── models/         # models SQLAlchemy permettant la création des Tables en BDD.
+│   ├── repositories/   # Couche d'accès aux données
+│   ├── services/       # Couche de logique métier
+│   ├── routers/        # Définitions des routes de l'API
+│   └── schemas/        # Schemas pydantic pour la validation des données
 │
-├── tests/              # Test suite for the application
-│   ├── __init__.py     # Required for pytest to discover the tests
-│   ├── conftest.py     # Pytest configuration and fixtures
+├── tests/              # Dossier de la suite des Tests
+│   ├── __init__.py     # Prérequis pytest pour exécuter les tests
+│   ├── conftest.py     # Configuration Pytest et fixtures
 │   └── test_client.py  # Integration tests for the client routes
 │
-├── .gitignore          # Files and directories to ignore in Git
-├── Dockerfile          # Dockerfile to build the FastAPI app
-├── docker-compose.yml  # Docker Compose configuration
-├── requirements.txt    # Python dependencies
-├── .env                # Environment variables (e.g., database credentials)
-├── .env.example        # Example .env file with environment variables
-├── README.md           # Project documentation
-└── test.db             # SQLite database for testing (auto-generated with tests)
+├── .gitignore          # Fichiers et Dossiers ignorés par Git
+├── Dockerfile          # Dockerfile permettant de build l'API FastAPI
+├── docker-compose.yml  # Configuration Docker Compose
+├── requirements.txt    # Dépendences python
+├── .env                # Variables d'Environnement
+├── .env.example        # Exemple de variables d'environnement pour le fichier .env
+└── README.md           # Documentation du Projet
 ```
 
-## Prerequisites
+## Prérequis
 
-Ensure the following tools are installed on your system:
+Le projet nécessite de pouvoir exécuter un environnement docker & docker desktop, le plus facile étant simplement d'installer Docker Desktop, voici un lien pour l'installer:
 
-- **Docker**: [Installation Guide](https://docs.docker.com/get-docker/)
-- **Docker Compose**: [Installation Guide](https://docs.docker.com/compose/install/)
+- **Docker Desktop**: [Guide d'Installation](https://www.docker.com/products/docker-desktop/)
 
-## Getting Started
+## Pour Commencer
 
-### 1. Clone the Repository
+### 1. Cloner le répertoire du projet
+
+#### Option 1: En HTTP
 
 ```bash
-git clone https://github.com/robinhotton/Projet-FastAPI-Docker.git # Private repository
+git clone https://github.com/Laynaria/projet2-groupe2-digicheese.git
 cd Projet-FastAPI-Docker
 ```
 
-### 2. Configure Environment Variables
+#### Option 2: En SSH
 
-Create a `.env` file in the project root and define the variables.  
-You can use the `.env.example` file as a template.  
+```bash
+git clone git@github.com:Laynaria/projet2-groupe2-digicheese.git
+cd Projet-FastAPI-Docker
+```
 
-### 3. Build and Run the Application
+### 2. Configurer les Variables d'Dnvironnement
 
-To build the Docker image and start all services (FastAPI and MariaDB):
+Copier le fichier `.env.example` à la racine, et nommez sa copie `.env`,
+définissez ensuite les variables.
+
+Attention à bien avoir les mêmes valeur pour les couples de variables suivantes :
+
+- **USER** et **DB_USER**
+- **PASSWORD** et **DB_PASSWORD**
+- **DATABASE** et **DB_NAME**
+- **PORT_DB_VISUALISATION** et **DB_PORT**
+
+### 3. Pour Build et Lancer l'application
+
+Pour build les images Docker et démarrer tous les services (FastAPI et MariaDB):
 
 ```bash
 docker-compose up --build
 ```
 
-Once running, the application will be accessible at:  
+Une fois les containers lancés, l'application est accessible sur:
 **[http://localhost:8000](http://localhost:8000)**
 
-The automatically generated API documentation will be available at:
+La documentation auto-générée de l'API se trouve sur:
 
 - Swagger UI: **[http://localhost:8000/docs](http://localhost:8000/docs)**
 - ReDoc: **[http://localhost:8000/redoc](http://localhost:8000/redoc)**
 
-### 4. Stop the Application
+### 4. Stopper l'Application
 
-To stop and remove all containers:
+Pour stopper et supprimer tous les containers utilisez la commande suivante:
 
 ```bash
 # -v flag removes the volumes
 docker-compose down -v
 ```
 
-## Database Management
+## Gestion de la BDD
 
-MariaDB is included as part of the `docker-compose.yml` file. You can interact with the database using any MySQL/MariaDB client or using adminer, a lightweight database management tool like phpMyAdmin.
+Pour intéragir avec le service MariaDB, notre Service de Gestion de Base de Données Relationelles, plusieurs options sont possible :
 
-### Access the Database via Adminer
+### Option 1 : Accès via Adminer
 
-Adminer is a lightweight database management tool that is accessible via a web browser.
+Adminer est un client léger permettant d'accéder à des Base de Données à partir d'un navigateur web.
 
-Navigate to **[http://localhost:8070](http://localhost:8070)** and use the following credentials:
+Naviguez sur **[http://localhost:8070](http://localhost:8070)** et utilisez les identifiants suivant:
 
 - **System**: MySQL/MariaDB
 - **Server**: db
@@ -96,57 +138,55 @@ Navigate to **[http://localhost:8070](http://localhost:8070)** and use the follo
 - **Password**: Admin123!
 - **Database**: digicheese
 
-Dont forget to replace `username`, `password`, and `database` with the values defined in your `.env` file.
+Attention, si vous avez modifiez les variables d'environnement dans votre fichier `.env`, n'oubliez pas d'utilisez les valeurs que vous avez choisies à la place.
 
-### Access the Database via other Tools
+### Option 2: Accès via le Container MariaDB
 
-You can also connect to the MariaDB database using any MySQL client (like MySQL Workbench, DBeaver, etc.) with the following connection details:
-
-The other connection details are the same as for Adminer :
-- **Port**: 3307 (or the port defined in your `.env` file in `PORT_DB_VISUALISATION`)
-
-### Access the MariaDB Container
-
-To open a MariaDB shell inside the container:
+Pour ouvrir un terminal MariaDB dans son container, lancez la commande:
 
 ```bash
 docker-compose exec db mysql -u root -p
 ```
 
-Use the password defined in your `.env` file with `MYSQL_ROOT_PASSWORD`.
+Utilisez ensuite le mot de passe `MYSQL_ROOT_PASSWORD` défini dans votre `.env` .
 
-## Running Tests
+## Éxécution des Tests
 
-### Option 1: Run Tests in a Dedicated Test Container
+### Option 1: Lancer les Tests dans un Container de Test Dédié
 
-Run the tests directly in a disposable container:
-
-```bash
-docker-compose run --rm fastapi pytest
-```
-
-### Option 2: Run Tests Inside the FastAPI Container
-
-Access the FastAPI container shell and run the tests manually:
+Pour lancer les tests dans un container disposable, utilisez la commande suivante:
 
 ```bash
-docker-compose exec fastapi bash
-pytest
+docker-compose run --rm fastapi pytest -W ignore::DeprecationWarning
 ```
 
-## Debugging
+Cette commande permettra de plus d'ignorer les Warnings de Dépréciation, inutiles pour notre cas.
 
-### Access the FastAPI Container Shell
+### Option 2: Lancer les Tests à l'intérieur du Container FastAPI
 
-To access the FastAPI container for debugging:
+Pour lancer les Tests manuellement, entrez dans le container grâce à la commande:
 
 ```bash
 docker-compose exec fastapi bash
 ```
 
-### View Container Logs
+Puis éxécutez les tests avec la commande:
 
-Check logs for the FastAPI or MariaDB containers:
+```bash
+pytest -W ignore::DeprecationWarning
+```
+
+Encore une fois, cette commande ignorera les Warnings de Dépréciation.
+
+## Pour Déboguer
+
+Pour accéder au container FastAPI pour le débogage utilisez la commande:
+
+```bash
+docker-compose exec fastapi bash
+```
+
+Vous pourrez accéder aux logs dans les containers FastAPI ou MariaDB avec les commandes suivantes:
 
 ```bash
 docker-compose logs fastapi

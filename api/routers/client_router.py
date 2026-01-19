@@ -1,50 +1,98 @@
-"""
-References all client-related endpoints in the FastAPI application.
-
-Receives requests from the client router, transform in client schema and processes them using the ClientService.
-"""
-
-from fastapi import APIRouter, Depends, HTTPException
+from typing import List
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from ..schemas import ClientPost, ClientPatch, ClientInDB
+
 from ..database import get_db
-from ..services import ClientService
+from api.schemas.client_schema import (
+    ClientCreate,
+    ClientRead,
+    ClientUpdate,
+)
+from api.services import client_service
+from api.routers.dependencies import require_roles
 
-# Create a router for client-related endpoints
-router = APIRouter(prefix="/client", tags=["client"])
+router = APIRouter(
+    prefix="/clients",
+    tags=["clients"],
+)
 
-# Initialize the client service to have access to client operations
-service = ClientService()
+AdminOrOpColis = require_roles("Admin", "OP-colis")
 
-@router.get("/", status_code=200, response_model=list[ClientInDB])
-def get_clients(db: Session=Depends(get_db)):
-    return service.get_all_clients(db)
-    
 
-@router.get("/{client_id}", status_code=200, response_model=ClientInDB)
-def get_client(client_id: int, db: Session=Depends(get_db)):
-    client = service.get_client_by_id(db, client_id)
-    if client is None:
+@router.post(
+    "/",
+    response_model=ClientRead,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(AdminOrOpColis)],
+)
+def create_client_endpoint(
+    client_in: ClientCreate,
+    db: Session = Depends(get_db),
+):
+    try:
+        client = client_service.create_client(db, client_in)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    return client
+
+
+@router.get(
+    "/",
+    response_model=List[ClientRead],
+    dependencies=[Depends(AdminOrOpColis)],
+)
+def list_clients_endpoint(
+    db: Session = Depends(get_db),
+    skip: int = 0,
+    limit: int = 100,
+):
+    return client_service.list_clients(db, skip, limit)
+
+
+@router.get(
+    "/{client_id}",
+    response_model=ClientRead,
+    dependencies=[Depends(AdminOrOpColis)],
+)
+def get_client_endpoint(
+    client_id: int,
+    db: Session = Depends(get_db),
+):
+    from api.repositories import client_repository as repo
+
+    client = repo.get_client(db, client_id)
+    if not client:
         raise HTTPException(status_code=404, detail="Client non trouvé")
     return client
 
 
-@router.post("/", status_code=201, response_model=ClientInDB)
-def create_client(donnees_client: ClientPost, db: Session=Depends(get_db)):
-    return service.create_client(db, donnees_client)
+@router.put(
+    "/{client_id}",
+    response_model=ClientRead,
+    dependencies=[Depends(AdminOrOpColis)],
+)
+def update_client_endpoint(
+    client_id: int,
+    client_in: ClientUpdate,
+    db: Session = Depends(get_db),
+):
+    try:
+        client = client_service.update_client(db, client_id, client_in)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    return client
 
 
-@router.patch("/{client_id}", status_code=200, response_model=ClientInDB)
-def patch_client(client_id: int, donnees_client: ClientPatch, db: Session=Depends(get_db)):
-    client = service.get_client_by_id(db, client_id)
-    if client is None:
-        raise HTTPException(status_code=404, detail="Client non trouvé")
-    return service.patch_client(db, client_id, donnees_client)
-
-
-@router.delete("/{client_id}", status_code=200, response_model=ClientInDB)
-def delete_client(client_id: int, db: Session=Depends(get_db)):
-    client = service.get_client_by_id(db, client_id)
-    if client is None:
-        raise HTTPException(status_code=404, detail="Client non trouvé")
-    return service.delete_client(db, client_id)
+@router.delete(
+    "/{client_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[Depends(AdminOrOpColis)],
+)
+def delete_client_endpoint(
+    client_id: int,
+    db: Session = Depends(get_db),
+):
+    try:
+        client_service.delete_client(db, client_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
