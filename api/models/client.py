@@ -1,15 +1,29 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
+
 from .base import Base
 
 class Client(Base):
-	__tablename__ = "t_client"
+	__tablename__ = "client"
 
-	codcli = Column(Integer, primary_key=True)
-	nom = Column(String(40), index=True)
-	prenom = Column(String(30))
-	genre = Column(String(8), default=None)
-	adresse = Column(String(50))
-	complement_adresse = Column(String(50), default=None)
-	tel = Column(String(10), default=None)
-	email = Column(String(255), default=None)
-	newsletter = Column(Integer, default=0)
+	idClient = Column(Integer, primary_key=True, autoincrement=True)
+
+	nomClient = Column(String(100), nullable=False)
+	prenomClient = Column(String(100), nullable=False)
+	genre = Column(String(10), nullable=True)  # ex : 'F', 'M', 'NB', etc.
+	emailClient = Column(String(255), nullable=False, unique=True)
+	telephone = Column(String(30), nullable=True)
+
+	# Relations
+	# Un client peut avoir plusieurs adresses
+	adresses = relationship(
+		"Adresse",
+		back_populates="client",
+		cascade="all, delete-orphan",
+	)
+
+	def __repr__(self) -> str:
+		return (
+			f"<Client(id={self.idClient}, nom='{self.nomClient}', "
+			f"prenom='{self.prenomClient}', email='{self.emailClient}')>"
+		)

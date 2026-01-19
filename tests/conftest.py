@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 from api.main import app
 from api.database import get_db
 from api.models import Base
+from api.routers.dependencies import get_current_utilisateur
 
 # Configuration de la base de données de test
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
@@ -30,10 +31,39 @@ def override_get_db():
         db.close()
 
 
-app.dependency_overrides[get_db] = override_get_db
+def override_get_current_utilisateur():
+    class FakeRole:
+        def __init__(self, libelleRole):
+            self.libelleRole = libelleRole
 
-# Client de test
+    class FakeUser:
+        idUtil = 1
+        roles = [FakeRole("Admin")]
+
+    return FakeUser()
+
+
 @pytest.fixture(scope="module")
 def client():
-    """Fixture qui fournit un client TestClient pour chaque test."""
-    return TestClient(app)
+    app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_current_utilisateur] = override_get_current_utilisateur
+
+    with TestClient(app) as c:
+        yield c
+
+    app.dependency_overrides.clear()
+
+@pytest.fixture
+def relcond_id(client: TestClient):
+    relcond_data = {
+        "quantiteObjet": 1
+    }
+
+    response = client.post(
+        "/api/v1/rel-conds",
+        headers={"Authorization": "Bearer fake"},
+        json=relcond_data
+    )
+
+    assert response.status_code == 201
+    return response.json()["idRelCond"]

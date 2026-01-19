@@ -1,35 +1,41 @@
-from ..models import Client
+from typing import List, Optional
 from sqlalchemy.orm import Session
 
+from api.models.client import Client
 
-class ClientRepository:
-    """Repository class for managing client operations in the database.
+def get_client(db: Session, client_id: int) -> Optional[Client]:
+    return db.query(Client).filter(Client.idClient == client_id).first()
 
-    Receive a dictionary from service, save it to the database and return the client model to service."""
-    
-    def get_all_clients(self, db: Session):
-        return list(db.query(Client).all())
-    
-    def get_client_by_id(self, db: Session, id: int):
-        return db.query(Client).get(id)
-    
-    def create_client(self, db: Session, donnees_client: dict):
-        client = Client(**donnees_client)
-        db.add(client)
-        db.commit()
-        db.refresh(client)
-        return client
-    
-    def patch_client(self, db: Session, id: int, donnees_client: dict):
-        client = db.query(Client).get(id)
-        for key, value in donnees_client.items():
-            setattr(client, key, value)
-        db.commit()
-        db.refresh(client)
-        return client
-    
-    def delete_client(self, db: Session, id: int):
-        client = db.query(Client).get(id)
-        db.delete(client)
-        db.commit()
-        return client
+
+def get_client_by_email(db: Session, email: str) -> Optional[Client]:
+    return db.query(Client).filter(Client.emailClient == email).first()
+
+
+def list_clients(db: Session, skip: int = 0, limit: int = 100) -> List[Client]:
+    return (
+        db.query(Client)
+        .order_by(Client.nomClient, Client.prenomClient)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
+
+def create_client(db: Session, client: Client) -> Client:
+    db.add(client)
+    db.commit()
+    db.refresh(client)
+    return client
+
+
+def update_client(db: Session, client: Client) -> Client:
+    db.commit()
+    db.refresh(client)
+    return client
+
+
+def delete_client(db: Session, client: Client) -> None:
+    # Le cascade="all, delete-orphan" sur Client.adresses
+    # supprime automatiquement les adresses liées.
+    db.delete(client)
+    db.commit()

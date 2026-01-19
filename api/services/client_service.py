@@ -1,38 +1,58 @@
+from typing import List
 from sqlalchemy.orm import Session
-from ..repositories import ClientRepository
-from ..schemas import ClientPost, ClientPatch
 
-class ClientService:
-    """Service class for managing client operations.
-    
-    Receive a schema from router and return a dictionary to repository."""
+from api.models.client import Client
+from api.repositories import client_repository as repo
+from api.schemas.client_schema import ClientCreate, ClientUpdate
 
-    def __init__(self):
-        self.repository = ClientRepository()
-    
-    def __traitement(self, client: dict):
-        return client
-    
-    
-    def get_all_clients(self, db: Session):
-        return self.repository.get_all_clients(db)
-    
-    
-    def get_client_by_id(self, db: Session, client_id: int):
-        return self.repository.get_client_by_id(db, client_id)
-    
-    
-    def create_client(self, db: Session, new_client: ClientPost):
-        new_client = new_client.model_dump()
-        new_client = self.__traitement(new_client)
-        return self.repository.create_client(db, new_client)
-    
-    
-    def patch_client(self, db: Session, client_id: int, client: ClientPatch):
-        client = client.model_dump(exclude_unset=True)
-        client = self.__traitement(client)
-        return self.repository.patch_client(db, client_id, client)
-    
-    
-    def delete_client(self, db: Session, client_id: int):
-        return self.repository.delete_client(db, client_id)
+
+def create_client(db: Session, client_in: ClientCreate) -> Client:
+    if repo.get_client_by_email(db, client_in.emailClient):
+        raise ValueError("Un client avec cet email existe déjà")
+
+    db_client = Client(
+        nomClient=client_in.nomClient,
+        prenomClient=client_in.prenomClient,
+        genre=client_in.genre,
+        emailClient=client_in.emailClient,
+        telephone=client_in.telephone,
+    )
+    return repo.create_client(db, db_client)
+
+
+def update_client(
+    db: Session, client_id: int, client_in: ClientUpdate
+) -> Client:
+    db_client = repo.get_client(db, client_id)
+    if not db_client:
+        raise ValueError("Client introuvable")
+
+    if client_in.emailClient is not None:
+        existing = repo.get_client_by_email(db, client_in.emailClient)
+        if existing and existing.idClient != db_client.idClient:
+            raise ValueError("Un client avec cet email existe déjà")
+        db_client.emailClient = client_in.emailClient
+
+    if client_in.nomClient is not None:
+        db_client.nomClient = client_in.nomClient
+    if client_in.prenomClient is not None:
+        db_client.prenomClient = client_in.prenomClient
+    if client_in.genre is not None:
+        db_client.genre = client_in.genre
+    if client_in.telephone is not None:
+        db_client.telephone = client_in.telephone
+
+    return repo.update_client(db, db_client)
+
+
+def delete_client(db: Session, client_id: int) -> None:
+    db_client = repo.get_client(db, client_id)
+    if not db_client:
+        raise ValueError("Client introuvable")
+    repo.delete_client(db, db_client)
+
+
+def list_clients(
+    db: Session, skip: int = 0, limit: int = 100
+) -> List[Client]:
+    return repo.list_clients(db, skip, limit)

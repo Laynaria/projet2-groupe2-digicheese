@@ -18,7 +18,25 @@ services:
       - DB_HOST=db
       - DB_PORT=3306
       - DB_NAME=${DATABASE:-digicheese}  # Default to 'digicheese' if DATABASE is not set in .env file
+        # --- SEED ---
+      - SEED_DB=${SEED_DB:-false}
+      - SEED_ADMIN=${SEED_ADMIN:-false}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@digicheese.local}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-Admin123!}
+      - ADMIN_NOM=${ADMIN_NOM:-Root}
+      - ADMIN_PRENOM=${ADMIN_PRENOM:-Admin}
+      - SEED_USERS=${SEED_USERS:-false}
+      - SEED_NB_OBJETS=${SEED_NB_OBJETS:-20}
+      - SEED_COMMUNES=${SEED_COMMUNES:-false}
+      - SEED_CLIENTS=${SEED_CLIENTS:-false}
+      - SEED_ADRESSES=${SEED_ADRESSES:-false}
+      - SEED_NB_COMMUNES=${SEED_NB_COMMUNES:-50}
+      - SEED_NB_CLIENTS=${SEED_NB_CLIENTS:-30}
+      - SEED_NB_ADRESSES=${SEED_NB_ADRESSES:-60}
 
+      - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
 
   db:
     image: mariadb:10.6
