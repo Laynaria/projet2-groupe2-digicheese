@@ -5,7 +5,7 @@ from faker import Faker
 import uuid
 
 from ..database import SessionLocal
-from ..models.detail_commande import DetailCommande
+from ..models import DetailCommande, Commande
 
 def seed_detail_commande():
     if os.getenv("SEED_DB", "false").lower() != "true":
@@ -22,6 +22,7 @@ def seed_detail_commande():
             print("Table commande déjà seedée")
             return
         
+        commandes: list[Commande] = db.query(Commande)
 
         detail_commandes = []
         for i in range(nb):
@@ -29,7 +30,7 @@ def seed_detail_commande():
                 quantite=random.randint(1, 10),
                 colis=str(uuid.uuid4()).replace("-", "").upper()[0:20],
                 commentaire=faker.word()[:255],
-                commande_id=i + 1
+                commande_id=commandes[i].idCommande
             )
             detail_commandes.append(new_detail_commande)
 
