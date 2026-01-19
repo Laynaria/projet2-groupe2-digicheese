@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from faker import Faker
 
 from api.database import SessionLocal
+from api.models import RelCond
 from api.models.objet import Objet
 
 
@@ -31,7 +32,7 @@ def seed_objets():
                 poids=Decimal(str(round(random.uniform(0.1, 50.0), 4))),
                 bIndispo=random.randint(0, 1),
                 points=random.randint(0, 100),
-                relCond_id=None
+                relCond_id=random.choice([r.idRelCond for r in db.query(RelCond).all()])
             )
             objets.append(obj)
 
