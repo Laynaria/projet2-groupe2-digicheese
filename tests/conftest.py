@@ -43,7 +43,6 @@ def override_get_current_utilisateur():
     return FakeUser()
 
 
-
 @pytest.fixture(scope="module")
 def client():
     app.dependency_overrides[get_db] = override_get_db
@@ -53,3 +52,18 @@ def client():
         yield c
 
     app.dependency_overrides.clear()
+
+@pytest.fixture
+def relcond_id(client: TestClient):
+    relcond_data = {
+        "quantiteObjet": 1
+    }
+
+    response = client.post(
+        "/api/v1/rel-conds",
+        headers={"Authorization": "Bearer fake"},
+        json=relcond_data
+    )
+
+    assert response.status_code == 201
+    return response.json()["idRelCond"]
