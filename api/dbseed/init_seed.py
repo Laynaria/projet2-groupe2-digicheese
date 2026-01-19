@@ -8,6 +8,7 @@ from .detail_commande_seed import seed_detail_commande
 from .commune_seed import seed_communes
 from .client_seed import seed_clients
 from .adresse_seed import seed_adresses
+from .detail_commande_objet_seed import seed_detail_commande_objet
 
 def init_seed():
     seed_roles()
@@ -21,3 +22,4 @@ def init_seed():
     seed_commande()
     seed_detail_commande()
     seed_objets()
+    seed_detail_commande_objet()

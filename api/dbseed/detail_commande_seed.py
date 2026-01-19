@@ -19,7 +19,7 @@ def seed_detail_commande():
     try:
         count = db.query(DetailCommande).count()
         if count > 0:
-            print("Table commande déjà seedée")
+            print("Table detail_commande déjà seedée")
             return
         
         commandes: list[Commande] = db.query(Commande)
