@@ -41,6 +41,7 @@ Pour réaliser ce projet, nous nous sommes basés sur les technologies suivantes
 ├── api/                # Dossier du Code source de l'API FastAPI
 │   ├── main.py         # Point d'entrée de notre API FastAPI
 │   ├── database.py     # Fichier de connexion à la BDD.
+│   ├── dbseed/         # Seed permettant de peupler la BDD.
 │   ├── models/         # models SQLAlchemy permettant la création des Tables en BDD.
 │   ├── repositories/   # Couche d'accès aux données
 │   ├── services/       # Couche de logique métier
@@ -177,6 +178,12 @@ pytest -W ignore::DeprecationWarning
 ```
 
 Encore une fois, cette commande ignorera les Warnings de Dépréciation.
+
+## Seed de la BDD
+
+Notre API est conçue avec un seeding automatique, afin de peupler la base de données de fausses données pour un environnement de dev ou de démonstration.
+
+Si vous souhaitez mettre ce projet en production, il vous suffit de ne pas renseigner dans le `.env` les variables d'environnement à partir de **SEED_DB** jusqu'à **SEED_USERS**
 
 ## Pour Déboguer
 
