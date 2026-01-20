@@ -51,7 +51,7 @@ Pour réaliser ce projet, nous nous sommes basés sur les technologies suivantes
 ├── tests/              # Dossier de la suite des Tests
 │   ├── __init__.py     # Prérequis pytest pour exécuter les tests
 │   ├── conftest.py     # Configuration Pytest et fixtures
-│   └── test_client.py  # Integration tests for the client routes
+│   └── test_client.py  # Fichier de test, ici pour les routes client.
 │
 ├── .gitignore          # Fichiers et Dossiers ignorés par Git
 ├── Dockerfile          # Dockerfile permettant de build l'API FastAPI
@@ -151,6 +151,12 @@ docker-compose exec db mysql -u root -p
 
 Utilisez ensuite le mot de passe `MYSQL_ROOT_PASSWORD` défini dans votre `.env` .
 
+## Seed de la BDD
+
+Notre API est conçue avec un seeding automatique, afin de peupler la base de données de fausses données pour un environnement de dev ou de démonstration.
+
+Si vous souhaitez mettre ce projet en production, il vous suffit de ne pas renseigner dans le `.env` les variables d'environnement à partir de **SEED_DB** jusqu'à **SEED_USERS**
+
 ## Éxécution des Tests
 
 ### Option 1: Lancer les Tests dans un Container de Test Dédié
@@ -178,12 +184,6 @@ pytest -W ignore::DeprecationWarning
 ```
 
 Encore une fois, cette commande ignorera les Warnings de Dépréciation.
-
-## Seed de la BDD
-
-Notre API est conçue avec un seeding automatique, afin de peupler la base de données de fausses données pour un environnement de dev ou de démonstration.
-
-Si vous souhaitez mettre ce projet en production, il vous suffit de ne pas renseigner dans le `.env` les variables d'environnement à partir de **SEED_DB** jusqu'à **SEED_USERS**
 
 ## Pour Déboguer
 
