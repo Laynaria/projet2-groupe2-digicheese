@@ -9,3 +9,6 @@ passlib
 python-jose
 email-validator
 faker
+flake8>=6.0.0
+pylint>=3.0.0
+radon>=6.0.0

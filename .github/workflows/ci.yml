@@ -1,0 +1,144 @@
+name: CI - Tests unitaires + Perf (k6) + KPI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+
+jobs:
+  unit-tests:
+    name: Unit tests (pytest)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Run pytest (JUnit + coverage)
+        env:
+          SECRET_KEY: test-secret-key
+          ALGORITHM: HS256
+          ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+        run: |
+          mkdir -p reports
+          pytest -q \
+            --junitxml=reports/pytest-junit.xml \
+            --cov=api --cov-report=xml:reports/coverage.xml --cov-report=term
+
+      - name: Upload unit test reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-reports
+          path: reports/
+
+
+  perf-tests:
+    name: Performance tests (k6) + KPI report
+    runs-on: ubuntu-latest
+    needs: unit-tests
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start API with docker compose (seed admin for CI)
+        env:
+          SEED_DB: "true"
+          SEED_ADMIN: "true"
+          ADMIN_EMAIL: "admin@digicheese.com"
+          ADMIN_PASSWORD: "Admin123!"
+          SECRET_KEY: "test-secret-key"
+          ALGORITHM: "HS256"
+          ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+
+          USER: "admin"
+          PASSWORD: "Admin123!"
+          DATABASE: "digicheese"
+          MYSQL_ROOT_PASSWORD: "securepassword"
+        run: |
+          docker compose up -d --build
+          docker ps
+
+      - name: Wait for API health
+        run: |
+          for i in {1..60}; do
+            if curl -sSf http://localhost:8000/docs > /dev/null; then
+              echo "API is up"
+              exit 0
+            fi
+            echo "Waiting for API... ($i)"
+            sleep 2
+          done
+          echo "API did not start in time"
+          docker compose logs
+          exit 1
+
+      - name: Run k6 10 VUs
+        run: |
+          mkdir -p performance/results reports
+          docker run --rm --network host -v "${PWD}:/work" -w /work grafana/k6 run performance/test.js \
+            --vus 10 --duration 30s \
+            -e BASE_URL="http://localhost:8000" \
+            -e API_PREFIX="/api/v1" \
+            -e EMAIL="admin@digicheese.com" -e PASSWORD="Admin123!" \
+            --out json=performance/results/k6_10.json
+
+      - name: Run k6 50 VUs
+        run: |
+          docker run --rm --network host -v "${PWD}:/work" -w /work grafana/k6 run performance/test.js \
+            --vus 50 --duration 30s \
+            -e BASE_URL="http://localhost:8000" \
+            -e API_PREFIX="/api/v1" \
+            -e EMAIL="admin@digicheese.com" -e PASSWORD="Admin123!" \
+            --out json=performance/results/k6_50.json
+
+      - name: Run k6 100 VUs (allowed to fail)
+        continue-on-error: true
+        run: |
+          docker run --rm --network host -v "${PWD}:/work" -w /work grafana/k6 run performance/test.js \
+            --vus 100 --duration 30s \
+            -e BASE_URL="http://localhost:8000" \
+            -e API_PREFIX="/api/v1" \
+            -e EMAIL="admin@digicheese.com" -e PASSWORD="Admin123!" \
+            --out json=performance/results/k6_100.json
+
+      - name: Set up Python for report
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Generate KPI table + report
+        run: |
+          python performance/ci/parse_k6.py \
+            --input performance/results \
+            --output reports
+
+      - name: Comment PR with KPI summary
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          path: reports/REPORT.md
+
+      - name: Upload performance artifacts (JSON + reports)
+        uses: actions/upload-artifact@v4
+        with:
+          name: perf-reports
+          path: |
+            performance/results/
+            reports/
+
+      - name: Stop containers
+        if: always()
+        run: |
+          docker compose down -v
