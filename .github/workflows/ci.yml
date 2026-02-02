@@ -2,7 +2,7 @@ name: CI - Tests unitaires + Perf (k6) + KPI
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [ "main", "master", "tb_ci_cd" ]
   pull_request:
 
 jobs:
