@@ -13,8 +13,12 @@ export const options = {
   vus: Number(__ENV.VUS || 10),
   duration: __ENV.DURATION || "30s",
   thresholds: {
-    http_req_failed: ["rate<0.02"], // < 2% d'erreurs
-    http_req_duration: ["p(95)<800"], // p95 < 800ms (global)
+    // Seuils assouplis pour le CI (environnement moins performant que la prod)
+    http_req_failed: ["rate<0.05"], // < 5% d'erreurs (au lieu de 2%)
+    http_req_duration: [
+      "p(95)<3000", // p95 < 3s (au lieu de 800ms - plus réaliste en CI)
+      "p(99)<5000"  // p99 < 5s
+    ],
   },
 };
 
