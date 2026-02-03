@@ -1,0 +1,352 @@
+api/main.py
+    F 18:0 read_root - A
+api/database.py
+    F 43:0 get_db - A
+api/services/commune_service.py
+    F 24:0 update_commune - A
+    F 9:0 create_commune - A
+    F 41:0 delete_commune - A
+    F 49:0 list_communes - A
+api/services/utilisateur_service.py
+    F 34:0 update_utilisateur - B
+    F 13:0 create_utilisateur - A
+    F 65:0 delete_utilisateur - A
+    F 72:0 list_utilisateurs - A
+api/services/auth_service.py
+    F 7:0 authenticate_utilisateur - A
+    F 15:0 login - A
+api/services/rel_cond_service.py
+    F 14:0 update_rel_cond - A
+    F 25:0 delete_rel_cond - A
+    F 9:0 create_rel_cond - A
+    F 32:0 list_rel_conds - A
+api/services/detail_commande_objet_service.py
+    F 35:0 update_detail_commande_objet - A
+    F 14:0 _check_detail_commande_exists - A
+    F 19:0 _check_objet_exists - A
+    F 51:0 delete_detail_commande_objet - A
+    F 24:0 create_detail_commande_objet - A
+    F 58:0 list_detail_commande_objets - A
+api/services/objet_service.py
+    C 5:0 ObjetService - A
+    M 7:4 ObjetService.__init__ - A
+    M 10:4 ObjetService.__process - A
+    M 14:4 ObjetService.get_all_objets - A
+    M 18:4 ObjetService.get_objet_by_id - A
+    M 22:4 ObjetService.create_objet - A
+    M 28:4 ObjetService.patch_objet - A
+    M 34:4 ObjetService.delete_objet - A
+api/services/commande_service.py
+    C 5:0 CommandeService - A
+    M 10:4 CommandeService.__init__ - A
+    M 13:4 CommandeService.__traitement - A
+    M 16:4 CommandeService.get_all_commandes - A
+    M 19:4 CommandeService.get_commande_by_id - A
+    M 22:4 CommandeService.create_commande - A
+    M 27:4 CommandeService.patch_commande - A
+    M 32:4 CommandeService.delete_commande - A
+api/services/adresse_service.py
+    F 37:0 update_adresse - B
+    F 11:0 _check_commune_exists - A
+    F 16:0 _check_client_exists - A
+    F 64:0 delete_adresse - A
+    F 21:0 create_adresse - A
+    F 71:0 list_adresses - A
+api/services/client_service.py
+    F 23:0 update_client - B
+    F 9:0 create_client - A
+    F 48:0 delete_client - A
+    F 55:0 list_clients - A
+api/services/security_service.py
+    F 38:0 decode_access_token - A
+    F 22:0 create_access_token - A
+    F 16:0 verify_password - A
+    F 19:0 get_password_hash - A
+api/services/detail_commande_service.py
+    C 5:0 DetailCommandeService - A
+    M 10:4 DetailCommandeService.__init__ - A
+    M 13:4 DetailCommandeService.__traitement - A
+    M 16:4 DetailCommandeService.get_all_detail_commandes - A
+    M 19:4 DetailCommandeService.get_detail_commande_by_id - A
+    M 22:4 DetailCommandeService.create_detail_commande - A
+    M 27:4 DetailCommandeService.patch_detail_commande - A
+    M 32:4 DetailCommandeService.delete_detail_commande - A
+api/services/role_service.py
+    F 21:0 update_role - A
+    F 9:0 create_role - A
+    F 36:0 delete_role - A
+    F 17:0 list_roles - A
+api/services/conditionnement_service.py
+    C 5:0 ConditionnementService - A
+    M 10:4 ConditionnementService.__init__ - A
+    M 13:4 ConditionnementService.__traitement - A
+    M 16:4 ConditionnementService.get_all_conditionnements - A
+    M 19:4 ConditionnementService.get_conditionnement_by_id - A
+    M 22:4 ConditionnementService.create_conditionnement - A
+    M 27:4 ConditionnementService.patch_conditionnement - A
+    M 32:4 ConditionnementService.delete_conditionnement - A
+api/routers/utilisateur_router.py
+    F 28:0 create_utilisateur - A
+    F 57:0 get_utilisateur - A
+    F 74:0 update_utilisateur - A
+    F 93:0 delete_utilisateur - A
+    F 44:0 list_utilisateurs - A
+api/routers/commande_router.py
+    F 28:0 get_commande - A
+    F 41:0 patch_commande - A
+    F 49:0 delete_commande - A
+    F 24:0 get_commandes - A
+    F 36:0 create_commande - A
+api/routers/adresse_router.py
+    F 25:0 create_adresse - A
+    F 54:0 get_adresse - A
+    F 71:0 update_adresse - A
+    F 88:0 delete_adresse - A
+    F 41:0 list_adresses - A
+api/routers/detail_commande_objet_router.py
+    F 21:0 create_dco - A
+    F 43:0 get_dco - A
+    F 57:0 update_dco - A
+    F 70:0 delete_dco - A
+    F 33:0 list_dcos - A
+api/routers/detail_commande_router.py
+    F 28:0 get_detail_commande - A
+    F 41:0 patch_detail_commande - A
+    F 49:0 delete_detail_commande - A
+    F 24:0 get_detail_commandes - A
+    F 36:0 create_detail_commande - A
+api/routers/rel_cond_router.py
+    F 33:0 get_rel_cond - A
+    F 45:0 update_rel_cond - A
+    F 57:0 delete_rel_cond - A
+    F 16:0 create_rel_cond - A
+    F 24:0 list_rel_conds - A
+api/routers/role_router.py
+    F 24:0 create_role - A
+    F 51:0 get_role - A
+    F 68:0 update_role - A
+    F 85:0 delete_role - A
+    F 40:0 list_roles - A
+api/routers/client_router.py
+    F 28:0 create_client_endpoint - A
+    F 57:0 get_client_endpoint - A
+    F 74:0 update_client_endpoint - A
+    F 91:0 delete_client_endpoint - A
+    F 44:0 list_clients_endpoint - A
+api/routers/objet_router.py
+    F 21:0 get_objet - A
+    F 34:0 patch_objet - A
+    F 42:0 delete_objet - A
+    F 16:0 get_objets - A
+    F 29:0 create_objet - A
+api/routers/auth_router.py
+    F 13:0 login - A
+    F 22:0 read_me - A
+api/routers/dependencies.py
+    F 13:0 get_current_utilisateur - A
+    F 37:0 require_roles - A
+api/routers/commune_router.py
+    F 33:0 create_commune - A
+    F 62:0 get_commune - A
+    F 79:0 update_commune - A
+    F 96:0 delete_commune - A
+    F 49:0 list_communes - A
+api/routers/conditionnement_router.py
+    F 28:0 get_conditionnement - A
+    F 41:0 patch_conditionnement - A
+    F 49:0 delete_conditionnement - A
+    F 24:0 get_conditionnements - A
+    F 36:0 create_conditionnement - A
+api/models/adresse.py
+    C 6:0 Adresse - A
+    M 28:4 Adresse.__repr__ - A
+api/models/utilisateur.py
+    C 6:0 Utilisateur - A
+api/models/commune.py
+    C 6:0 Commune - A
+    M 22:4 Commune.__repr__ - A
+api/models/rel_cond.py
+    C 5:0 RelCond - A
+api/models/detail_commande.py
+    C 6:0 DetailCommande - A
+api/models/detail_commande_objet.py
+    C 4:0 DetailCommandeObjet - A
+api/models/utilisateur_role.py
+    C 5:0 UtilisateurRole - A
+api/models/client.py
+    C 6:0 Client - A
+    M 25:1 Client.__repr__ - A
+api/models/role.py
+    C 6:0 Role - A
+api/models/conditionnement.py
+    C 4:0 Conditionnement - A
+api/models/objet.py
+    C 5:0 Objet - A
+api/models/commande.py
+    C 6:0 Commande - A
+api/schemas/role_schema.py
+    C 5:0 RoleBase - A
+    C 9:0 RoleCreate - A
+    C 14:0 RoleUpdate - A
+    C 19:0 RoleRead - A
+api/schemas/detail_commande_objet_schema.py
+    C 5:0 DetailCommandeObjetBase - A
+    C 10:0 DetailCommandeObjetCreate - A
+    C 14:0 DetailCommandeObjetUpdate - A
+    C 19:0 DetailCommandeObjetRead - A
+api/schemas/objet_schema.py
+    C 6:0 ObjetBase - A
+    C 15:0 ObjetPost - A
+    C 19:0 ObjetPatch - A
+    C 28:0 ObjetInDB - A
+    C 32:0 Config - A
+api/schemas/client_schema.py
+    C 5:0 ClientBase - A
+    C 13:0 ClientCreate - A
+    C 18:0 ClientUpdate - A
+    C 27:0 ClientRead - A
+api/schemas/utilisateur_schema.py
+    C 4:0 RoleRead - A
+    C 11:0 UtilisateurBase - A
+    C 16:0 UtilisateurCreate - A
+    C 20:0 UtilisateurUpdate - A
+    C 27:0 UtilisateurRead - A
+    C 35:0 Token - A
+    C 39:0 TokenData - A
+    C 43:0 LoginRequest - A
+api/schemas/rel_cond_schema.py
+    C 5:0 RelCondBase - A
+    C 9:0 RelCondCreate - A
+    C 13:0 RelCondUpdate - A
+    C 17:0 RelCondRead - A
+api/schemas/conditionnement_schema.py
+    C 4:0 ConditionnementBase - A
+    C 10:0 ConditionnementPost - A
+    C 14:0 ConditionnementPatch - A
+    C 22:0 ConditionnementInDB - A
+api/schemas/adresse_schema.py
+    C 5:0 AdresseBase - A
+    C 15:0 AdresseCreate - A
+    C 20:0 AdresseUpdate - A
+    C 31:0 AdresseRead - A
+api/schemas/commande_schema.py
+    C 5:0 CommandeBase - A
+    C 17:0 CommandePost - A
+    C 21:0 CommandePatch - A
+    C 33:0 CommandeInDB - A
+api/schemas/commune_schema.py
+    C 5:0 CommuneBase - A
+    C 11:0 CommuneCreate - A
+    C 16:0 CommuneUpdate - A
+    C 23:0 CommuneRead - A
+api/schemas/detail_commande_schema.py
+    C 4:0 DetailCommandeBase - A
+    C 11:0 DetailCommandePost - A
+    C 15:0 DetailCommandePatch - A
+    C 24:0 DetailCommandeInDB - A
+api/repositories/commande_repository.py
+    C 4:0 CommandeRepository - A
+    M 24:4 CommandeRepository.patch_commande - A
+    M 11:4 CommandeRepository.get_all_commandes - A
+    M 14:4 CommandeRepository.get_commande_by_id - A
+    M 17:4 CommandeRepository.create_commande - A
+    M 32:4 CommandeRepository.delete_commande - A
+api/repositories/objet_repository.py
+    C 5:0 ObjetRepository - A
+    M 20:4 ObjetRepository.patch_objet - A
+    M 7:4 ObjetRepository.get_all_objets - A
+    M 10:4 ObjetRepository.get_objet_by_id - A
+    M 13:4 ObjetRepository.create_objet - A
+    M 28:4 ObjetRepository.delete_objet - A
+api/repositories/commune_repository.py
+    F 6:0 get_commune - A
+    F 10:0 get_commune_by_cp_and_nom - A
+    F 22:0 list_communes - A
+    F 32:0 create_commune - A
+    F 39:0 update_commune - A
+    F 45:0 delete_commune - A
+api/repositories/detail_commande_repository.py
+    C 4:0 DetailCommandeRepository - A
+    M 24:4 DetailCommandeRepository.patch_detail_commande - A
+    M 11:4 DetailCommandeRepository.get_all_detail_commandes - A
+    M 14:4 DetailCommandeRepository.get_detail_commande_by_id - A
+    M 17:4 DetailCommandeRepository.create_detail_commande - A
+    M 32:4 DetailCommandeRepository.delete_detail_commande - A
+api/repositories/utilisateur_repository.py
+    F 23:0 patch_utilisateur - A
+    F 42:0 set_roles_for_utilisateur - A
+    F 8:0 get_utilisateur_by_email - A
+    F 11:0 get_utilisateur - A
+    F 14:0 get_all_utilisateurs - A
+    F 17:0 create_utilisateur - A
+    F 32:0 delete_utilisateur - A
+    F 36:0 get_role_by_name - A
+    F 39:0 get_role_by_id - A
+api/repositories/detail_commande_objet_repository.py
+    F 7:0 get_detail_commande_objet - A
+    F 15:0 list_detail_commande_objets - A
+    F 25:0 create_detail_commande_objet - A
+    F 32:0 update_detail_commande_objet - A
+    F 38:0 delete_detail_commande_objet - A
+api/repositories/client_repository.py
+    F 6:0 get_client - A
+    F 10:0 get_client_by_email - A
+    F 14:0 list_clients - A
+    F 24:0 create_client - A
+    F 31:0 update_client - A
+    F 37:0 delete_client - A
+api/repositories/rel_cond_repository.py
+    F 7:0 get_rel_cond - A
+    F 11:0 list_rel_conds - A
+    F 21:0 create_rel_cond - A
+    F 28:0 update_rel_cond - A
+    F 34:0 delete_rel_cond - A
+api/repositories/conditionnement_repository.py
+    C 4:0 ConditionnementRepository - A
+    M 24:4 ConditionnementRepository.patch_conditionnement - A
+    M 11:4 ConditionnementRepository.get_all_conditionnements - A
+    M 14:4 ConditionnementRepository.get_conditionnement_by_id - A
+    M 17:4 ConditionnementRepository.create_conditionnement - A
+    M 32:4 ConditionnementRepository.delete_conditionnement - A
+api/repositories/role_repository.py
+    F 33:0 delete_role - A
+    F 7:0 get_role - A
+    F 11:0 get_role_by_name - A
+    F 15:0 list_roles - A
+    F 19:0 create_role - A
+    F 26:0 update_role - A
+api/repositories/adresse_repository.py
+    F 6:0 get_adresse - A
+    F 10:0 list_adresses - A
+    F 20:0 create_adresse - A
+    F 27:0 update_adresse - A
+    F 33:0 delete_adresse - A
+api/dbseed/init_seed.py
+    F 14:0 init_seed - A
+api/dbseed/utilisateur_seed.py
+    F 12:0 seed_utilisateurs - B
+api/dbseed/objet_seed.py
+    F 12:0 seed_objets - B
+api/dbseed/admin_user_seed.py
+    F 11:0 seed_admin_user - B
+api/dbseed/commune_seed.py
+    F 9:0 seed_communes - A
+api/dbseed/commande_seed.py
+    F 11:0 seed_commande - B
+api/dbseed/rel_cond_seed.py
+    F 9:0 seed_rel_cond - A
+api/dbseed/adresse_seed.py
+    F 12:0 seed_adresses - B
+api/dbseed/role_seed.py
+    F 8:0 seed_roles - B
+api/dbseed/detail_commande_objet_seed.py
+    F 8:0 seed_detail_commande_objet - A
+api/dbseed/client_seed.py
+    F 9:0 seed_clients - A
+api/dbseed/conditionnement_seed.py
+    F 10:0 seed_conditionnement - A
+api/dbseed/detail_commande_seed.py
+    F 10:0 seed_detail_commande - A
+
+274 blocks (classes, functions, methods) analyzed.
+Average complexity: A (1.6605839416058394)

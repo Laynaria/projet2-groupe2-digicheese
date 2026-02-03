@@ -1,0 +1,628 @@
+api/database.py:19:80: E501 line too long (92 > 79 characters)
+api/database.py:34:80: E501 line too long (118 > 79 characters)
+api/database.py:37:80: E501 line too long (98 > 79 characters)
+api/dbseed/__init__.py:1:1: F401 '.init_seed.init_seed' imported but unused
+api/dbseed/__init__.py:1:33: W292 no newline at end of file
+api/dbseed/admin_user_seed.py:23:80: E501 line too long (84 > 79 characters)
+api/dbseed/admin_user_seed.py:48:80: E501 line too long (82 > 79 characters)
+api/dbseed/adresse_seed.py:31:80: E501 line too long (81 > 79 characters)
+api/dbseed/adresse_seed.py:39:80: E501 line too long (80 > 79 characters)
+api/dbseed/adresse_seed.py:61:80: E501 line too long (86 > 79 characters)
+api/dbseed/client_seed.py:30:80: E501 line too long (80 > 79 characters)
+api/dbseed/commande_seed.py:11:1: E302 expected 2 blank lines, found 1
+api/dbseed/commande_seed.py:15:1: W293 blank line contains whitespace
+api/dbseed/commande_seed.py:25:1: W293 blank line contains whitespace
+api/dbseed/commande_seed.py:32:80: E501 line too long (83 > 79 characters)
+api/dbseed/commande_seed.py:34:1: W293 blank line contains whitespace
+api/dbseed/commande_seed.py:46:80: E501 line too long (114 > 79 characters)
+api/dbseed/commande_seed.py:52:15: F541 f-string is missing placeholders
+api/dbseed/commande_seed.py:54:5: F841 local variable 'e' is assigned to but never used
+api/dbseed/commande_seed.py:58:19: W292 no newline at end of file
+api/dbseed/conditionnement_seed.py:10:1: E302 expected 2 blank lines, found 1
+api/dbseed/conditionnement_seed.py:18:1: W293 blank line contains whitespace
+api/dbseed/conditionnement_seed.py:29:80: E501 line too long (87 > 79 characters)
+api/dbseed/conditionnement_seed.py:36:15: F541 f-string is missing placeholders
+api/dbseed/conditionnement_seed.py:38:5: F841 local variable 'e' is assigned to but never used
+api/dbseed/detail_commande_objet_seed.py:8:1: E302 expected 2 blank lines, found 1
+api/dbseed/detail_commande_objet_seed.py:12:1: W293 blank line contains whitespace
+api/dbseed/detail_commande_objet_seed.py:21:1: W293 blank line contains whitespace
+api/dbseed/detail_commande_objet_seed.py:28:9: E303 too many blank lines (2)
+api/dbseed/detail_commande_objet_seed.py:31:80: E501 line too long (114 > 79 characters)
+api/dbseed/detail_commande_objet_seed.py:38:15: F541 f-string is missing placeholders
+api/dbseed/detail_commande_objet_seed.py:40:5: F841 local variable 'e' is assigned to but never used
+api/dbseed/detail_commande_objet_seed.py:44:19: W292 no newline at end of file
+api/dbseed/detail_commande_seed.py:10:1: E302 expected 2 blank lines, found 1
+api/dbseed/detail_commande_seed.py:14:1: W293 blank line contains whitespace
+api/dbseed/detail_commande_seed.py:24:1: W293 blank line contains whitespace
+api/dbseed/detail_commande_seed.py:39:15: F541 f-string is missing placeholders
+api/dbseed/detail_commande_seed.py:41:5: F841 local variable 'e' is assigned to but never used
+api/dbseed/detail_commande_seed.py:45:19: W292 no newline at end of file
+api/dbseed/init_seed.py:14:1: E302 expected 2 blank lines, found 1
+api/dbseed/objet_seed.py:35:80: E501 line too long (88 > 79 characters)
+api/dbseed/objet_seed.py:41:15: F541 f-string is missing placeholders
+api/dbseed/objet_seed.py:43:5: F841 local variable 'e' is assigned to but never used
+api/dbseed/rel_cond_seed.py:24:34: E251 unexpected spaces around keyword / parameter equals
+api/dbseed/role_seed.py:20:80: E501 line too long (91 > 79 characters)
+api/dbseed/role_seed.py:30:15: F541 f-string is missing placeholders
+api/dbseed/utilisateur_seed.py:12:1: E302 expected 2 blank lines, found 1
+api/dbseed/utilisateur_seed.py:29:80: E501 line too long (84 > 79 characters)
+api/dbseed/utilisateur_seed.py:40:80: E501 line too long (84 > 79 characters)
+api/dbseed/utilisateur_seed.py:42:33: F541 f-string is missing placeholders
+api/dbseed/utilisateur_seed.py:44:36: W291 trailing whitespace
+api/main.py:2:1: F403 'from .models import *' used; unable to detect undefined names
+api/main.py:11:1: F405 'Base' may be undefined, or defined from star imports: .models
+api/main.py:17:1: E302 expected 2 blank lines, found 1
+api/models/__init__.py:15:80: E501 line too long (184 > 79 characters)
+api/models/__init__.py:15:185: W292 no newline at end of file
+api/models/adresse.py:6:1: E302 expected 2 blank lines, found 1
+api/models/adresse.py:19:80: E501 line too long (80 > 79 characters)
+api/models/adresse.py:30:80: E501 line too long (86 > 79 characters)
+api/models/base.py:3:26: W292 no newline at end of file
+api/models/client.py:6:1: E302 expected 2 blank lines, found 1
+api/models/client.py:7:1: W191 indentation contains tabs
+api/models/client.py:9:1: W191 indentation contains tabs
+api/models/client.py:11:1: W191 indentation contains tabs
+api/models/client.py:12:1: W191 indentation contains tabs
+api/models/client.py:13:1: W191 indentation contains tabs
+api/models/client.py:14:1: W191 indentation contains tabs
+api/models/client.py:15:1: W191 indentation contains tabs
+api/models/client.py:17:1: W191 indentation contains tabs
+api/models/client.py:18:1: W191 indentation contains tabs
+api/models/client.py:19:1: W191 indentation contains tabs
+api/models/client.py:20:1: W191 indentation contains tabs
+api/models/client.py:21:1: W191 indentation contains tabs
+api/models/client.py:22:1: W191 indentation contains tabs
+api/models/client.py:23:1: W191 indentation contains tabs
+api/models/client.py:25:1: W191 indentation contains tabs
+api/models/client.py:26:1: W191 indentation contains tabs
+api/models/client.py:27:1: W191 indentation contains tabs
+api/models/client.py:28:1: W191 indentation contains tabs
+api/models/client.py:29:1: W191 indentation contains tabs
+api/models/client.py:29:4: W292 no newline at end of file
+api/models/commande.py:1:1: F401 'sqlalchemy.Index' imported but unused
+api/models/commande.py:1:80: E501 line too long (87 > 79 characters)
+api/models/commande.py:4:1: F401 '.detail_commande.DetailCommande' imported but unused
+api/models/commande.py:6:1: E302 expected 2 blank lines, found 1
+api/models/commande.py:7:1: W191 indentation contains tabs
+api/models/commande.py:9:1: W191 indentation contains tabs
+api/models/commande.py:9:29: E231 missing whitespace after ','
+api/models/commande.py:10:1: W191 indentation contains tabs
+api/models/commande.py:11:1: W191 indentation contains tabs
+api/models/commande.py:12:1: W191 indentation contains tabs
+api/models/commande.py:13:1: W191 indentation contains tabs
+api/models/commande.py:14:1: W191 indentation contains tabs
+api/models/commande.py:15:1: W191 indentation contains tabs
+api/models/commande.py:16:1: W191 indentation contains tabs
+api/models/commande.py:17:1: W191 indentation contains tabs
+api/models/commande.py:17:28: E231 missing whitespace after ','
+api/models/commande.py:18:1: W191 indentation contains tabs
+api/models/commande.py:18:37: E231 missing whitespace after ','
+api/models/commande.py:18:80: E501 line too long (85 > 79 characters)
+api/models/commande.py:20:1: W191 indentation contains tabs
+api/models/commande.py:20:80: E501 line too long (110 > 79 characters)
+api/models/commande.py:22:1: W191 indentation contains tabs
+api/models/commande.py:22:69: W292 no newline at end of file
+api/models/commune.py:1:1: F401 'sqlalchemy.ForeignKey' imported but unused
+api/models/commune.py:6:1: E302 expected 2 blank lines, found 1
+api/models/commune.py:23:80: E501 line too long (86 > 79 characters)
+api/models/conditionnement.py:4:1: E302 expected 2 blank lines, found 1
+api/models/conditionnement.py:5:1: W191 indentation contains tabs
+api/models/conditionnement.py:7:1: W191 indentation contains tabs
+api/models/conditionnement.py:7:36: E231 missing whitespace after ','
+api/models/conditionnement.py:8:1: W191 indentation contains tabs
+api/models/conditionnement.py:9:1: W191 indentation contains tabs
+api/models/conditionnement.py:10:1: W191 indentation contains tabs
+api/models/conditionnement.py:10:35: W292 no newline at end of file
+api/models/detail_commande.py:1:1: F401 'sqlalchemy.Date' imported but unused
+api/models/detail_commande.py:1:1: F401 'sqlalchemy.Index' imported but unused
+api/models/detail_commande.py:1:1: F401 'sqlalchemy.Float' imported but unused
+api/models/detail_commande.py:4:1: F401 '.detail_commande_objet.DetailCommandeObjet' imported but unused
+api/models/detail_commande.py:6:1: E302 expected 2 blank lines, found 1
+api/models/detail_commande.py:7:1: W191 indentation contains tabs
+api/models/detail_commande.py:9:1: W191 indentation contains tabs
+api/models/detail_commande.py:9:35: E231 missing whitespace after ','
+api/models/detail_commande.py:10:1: W191 indentation contains tabs
+api/models/detail_commande.py:11:1: W191 indentation contains tabs
+api/models/detail_commande.py:12:1: W191 indentation contains tabs
+api/models/detail_commande.py:13:1: W191 indentation contains tabs
+api/models/detail_commande.py:15:1: W191 indentation contains tabs
+api/models/detail_commande.py:15:80: E501 line too long (126 > 79 characters)
+api/models/detail_commande.py:18:1: W191 indentation contains tabs
+api/models/detail_commande.py:18:2: E303 too many blank lines (2)
+api/models/detail_commande.py:18:69: W292 no newline at end of file
+api/models/detail_commande_objet.py:1:1: F401 'sqlalchemy.String' imported but unused
+api/models/detail_commande_objet.py:1:1: F401 'sqlalchemy.Date' imported but unused
+api/models/detail_commande_objet.py:1:1: F401 'sqlalchemy.Index' imported but unused
+api/models/detail_commande_objet.py:1:1: F401 'sqlalchemy.Float' imported but unused
+api/models/detail_commande_objet.py:4:1: E302 expected 2 blank lines, found 1
+api/models/detail_commande_objet.py:5:1: W191 indentation contains tabs
+api/models/detail_commande_objet.py:7:1: W191 indentation contains tabs
+api/models/detail_commande_objet.py:7:40: E231 missing whitespace after ','
+api/models/detail_commande_objet.py:8:1: W191 indentation contains tabs
+api/models/detail_commande_objet.py:8:38: E231 missing whitespace after ','
+api/models/detail_commande_objet.py:8:80: E501 line too long (85 > 79 characters)
+api/models/detail_commande_objet.py:9:1: W191 indentation contains tabs
+api/models/detail_commande_objet.py:9:27: E231 missing whitespace after ','
+api/models/detail_commande_objet.py:12:1: W191 indentation contains tabs
+api/models/detail_commande_objet.py:12:2: E303 too many blank lines (2)
+api/models/detail_commande_objet.py:12:69: W292 no newline at end of file
+api/models/objet.py:6:1: W191 indentation contains tabs
+api/models/objet.py:8:1: W191 indentation contains tabs
+api/models/objet.py:8:26: E231 missing whitespace after ','
+api/models/objet.py:9:1: W191 indentation contains tabs
+api/models/objet.py:10:1: W191 indentation contains tabs
+api/models/objet.py:11:1: W191 indentation contains tabs
+api/models/objet.py:12:1: W191 indentation contains tabs
+api/models/objet.py:13:1: W191 indentation contains tabs
+api/models/objet.py:14:1: W191 indentation contains tabs
+api/models/objet.py:14:80: W292 no newline at end of file
+api/models/role.py:16:6: W292 no newline at end of file
+api/models/utilisateur.py:19:6: W292 no newline at end of file
+api/models/utilisateur_role.py:8:80: E501 line too long (80 > 79 characters)
+api/repositories/__init__.py:1:1: F401 '.client_repository.get_client' imported but unused
+api/repositories/__init__.py:1:1: F401 '.client_repository.get_client_by_email' imported but unused
+api/repositories/__init__.py:1:1: F401 '.client_repository.list_clients' imported but unused
+api/repositories/__init__.py:1:1: F401 '.client_repository.create_client' imported but unused
+api/repositories/__init__.py:1:1: F401 '.client_repository.update_client' imported but unused
+api/repositories/__init__.py:1:1: F401 '.client_repository.delete_client' imported but unused
+api/repositories/__init__.py:1:80: E501 line too long (123 > 79 characters)
+api/repositories/__init__.py:2:1: F401 '.objet_repository.ObjetRepository' imported but unused
+api/repositories/__init__.py:3:1: F401 '.commande_repository.CommandeRepository' imported but unused
+api/repositories/__init__.py:4:1: F401 '.conditionnement_repository.ConditionnementRepository' imported but unused
+api/repositories/__init__.py:5:1: F401 '.detail_commande_repository.DetailCommandeRepository' imported but unused
+api/repositories/__init__.py:6:1: F401 '.utilisateur_repository.get_utilisateur' imported but unused
+api/repositories/__init__.py:6:1: F401 '.utilisateur_repository.get_utilisateur_by_email' imported but unused
+api/repositories/__init__.py:6:1: F401 '.utilisateur_repository.get_all_utilisateurs' imported but unused
+api/repositories/__init__.py:6:1: F401 '.utilisateur_repository.create_utilisateur' imported but unused
+api/repositories/__init__.py:6:1: F401 '.utilisateur_repository.patch_utilisateur' imported but unused
+api/repositories/__init__.py:6:1: F401 '.utilisateur_repository.delete_utilisateur' imported but unused
+api/repositories/__init__.py:6:1: F401 '.utilisateur_repository.get_role_by_name' imported but unused
+api/repositories/__init__.py:6:1: F401 '.utilisateur_repository.get_role_by_id' imported but unused
+api/repositories/__init__.py:6:1: F401 '.utilisateur_repository.set_roles_for_utilisateur' imported but unused
+api/repositories/__init__.py:6:80: E501 line too long (221 > 79 characters)
+api/repositories/__init__.py:7:1: F401 '.role_repository.get_role' imported but unused
+api/repositories/__init__.py:7:1: F401 '.role_repository.get_role_by_name as get_role_by_name_repo' imported but unused
+api/repositories/__init__.py:7:1: F401 '.role_repository.list_roles' imported but unused
+api/repositories/__init__.py:7:1: F401 '.role_repository.create_role' imported but unused
+api/repositories/__init__.py:7:1: F401 '.role_repository.update_role' imported but unused
+api/repositories/__init__.py:7:1: F401 '.role_repository.delete_role' imported but unused
+api/repositories/__init__.py:7:80: E501 line too long (133 > 79 characters)
+api/repositories/__init__.py:8:1: F401 '.commune_repository.get_commune' imported but unused
+api/repositories/__init__.py:8:1: F401 '.commune_repository.get_commune_by_cp_and_nom' imported but unused
+api/repositories/__init__.py:8:1: F401 '.commune_repository.list_communes' imported but unused
+api/repositories/__init__.py:8:1: F401 '.commune_repository.create_commune' imported but unused
+api/repositories/__init__.py:8:1: F401 '.commune_repository.update_commune' imported but unused
+api/repositories/__init__.py:8:1: F401 '.commune_repository.delete_commune' imported but unused
+api/repositories/__init__.py:8:80: E501 line too long (135 > 79 characters)
+api/repositories/__init__.py:9:1: F401 '.adresse_repository.get_adresse' imported but unused
+api/repositories/__init__.py:9:1: F401 '.adresse_repository.list_adresses' imported but unused
+api/repositories/__init__.py:9:1: F401 '.adresse_repository.create_adresse' imported but unused
+api/repositories/__init__.py:9:1: F401 '.adresse_repository.update_adresse' imported but unused
+api/repositories/__init__.py:9:1: F401 '.adresse_repository.delete_adresse' imported but unused
+api/repositories/__init__.py:9:80: E501 line too long (108 > 79 characters)
+api/repositories/__init__.py:10:1: F401 '.detail_commande_objet_repository.get_detail_commande_objet' imported but unused
+api/repositories/__init__.py:10:1: F401 '.detail_commande_objet_repository.list_detail_commande_objets' imported but unused
+api/repositories/__init__.py:10:1: F401 '.detail_commande_objet_repository.create_detail_commande_objet' imported but unused
+api/repositories/__init__.py:10:1: F401 '.detail_commande_objet_repository.update_detail_commande_objet' imported but unused
+api/repositories/__init__.py:10:1: F401 '.detail_commande_objet_repository.delete_detail_commande_objet' imported but unused
+api/repositories/__init__.py:10:80: E501 line too long (192 > 79 characters)
+api/repositories/__init__.py:11:1: F401 '.rel_cond_repository.get_rel_cond' imported but unused
+api/repositories/__init__.py:11:1: F401 '.rel_cond_repository.list_rel_conds' imported but unused
+api/repositories/__init__.py:11:1: F401 '.rel_cond_repository.create_rel_cond' imported but unused
+api/repositories/__init__.py:11:1: F401 '.rel_cond_repository.update_rel_cond' imported but unused
+api/repositories/__init__.py:11:1: F401 '.rel_cond_repository.delete_rel_cond' imported but unused
+api/repositories/__init__.py:11:80: E501 line too long (114 > 79 characters)
+api/repositories/adresse_repository.py:6:1: E302 expected 2 blank lines, found 1
+api/repositories/adresse_repository.py:10:80: E501 line too long (81 > 79 characters)
+api/repositories/client_repository.py:6:1: E302 expected 2 blank lines, found 1
+api/repositories/commande_repository.py:4:1: E302 expected 2 blank lines, found 1
+api/repositories/commande_repository.py:8:80: E501 line too long (104 > 79 characters)
+api/repositories/commande_repository.py:13:1: W293 blank line contains whitespace
+api/repositories/commande_repository.py:16:1: W293 blank line contains whitespace
+api/repositories/commande_repository.py:31:1: W293 blank line contains whitespace
+api/repositories/commande_repository.py:36:24: W292 no newline at end of file
+api/repositories/commune_repository.py:6:1: E302 expected 2 blank lines, found 1
+api/repositories/commune_repository.py:22:80: E501 line too long (81 > 79 characters)
+api/repositories/conditionnement_repository.py:4:1: E302 expected 2 blank lines, found 1
+api/repositories/conditionnement_repository.py:8:80: E501 line too long (111 > 79 characters)
+api/repositories/conditionnement_repository.py:13:1: W293 blank line contains whitespace
+api/repositories/conditionnement_repository.py:16:1: W293 blank line contains whitespace
+api/repositories/conditionnement_repository.py:24:80: E501 line too long (86 > 79 characters)
+api/repositories/conditionnement_repository.py:31:1: W293 blank line contains whitespace
+api/repositories/conditionnement_repository.py:36:31: W292 no newline at end of file
+api/repositories/detail_commande_objet_repository.py:7:80: E501 line too long (89 > 79 characters)
+api/repositories/detail_commande_objet_repository.py:15:80: E501 line too long (107 > 79 characters)
+api/repositories/detail_commande_objet_repository.py:25:80: E501 line too long (95 > 79 characters)
+api/repositories/detail_commande_objet_repository.py:32:80: E501 line too long (95 > 79 characters)
+api/repositories/detail_commande_objet_repository.py:38:80: E501 line too long (80 > 79 characters)
+api/repositories/detail_commande_repository.py:4:1: E302 expected 2 blank lines, found 1
+api/repositories/detail_commande_repository.py:8:80: E501 line too long (111 > 79 characters)
+api/repositories/detail_commande_repository.py:13:1: W293 blank line contains whitespace
+api/repositories/detail_commande_repository.py:16:1: W293 blank line contains whitespace
+api/repositories/detail_commande_repository.py:24:80: E501 line too long (86 > 79 characters)
+api/repositories/detail_commande_repository.py:31:1: W293 blank line contains whitespace
+api/repositories/detail_commande_repository.py:36:31: W292 no newline at end of file
+api/repositories/objet_repository.py:6:1: W293 blank line contains whitespace
+api/repositories/objet_repository.py:9:1: W293 blank line contains whitespace
+api/repositories/objet_repository.py:12:1: W293 blank line contains whitespace
+api/repositories/objet_repository.py:19:1: W293 blank line contains whitespace
+api/repositories/objet_repository.py:27:1: W293 blank line contains whitespace
+api/repositories/objet_repository.py:32:21: W292 no newline at end of file
+api/repositories/rel_cond_repository.py:11:80: E501 line too long (82 > 79 characters)
+api/repositories/role_repository.py:7:1: E302 expected 2 blank lines, found 1
+api/repositories/role_repository.py:41:80: E501 line too long (93 > 79 characters)
+api/repositories/utilisateur_repository.py:8:1: E302 expected 2 blank lines, found 1
+api/repositories/utilisateur_repository.py:11:1: E302 expected 2 blank lines, found 1
+api/repositories/utilisateur_repository.py:14:1: E302 expected 2 blank lines, found 1
+api/repositories/utilisateur_repository.py:17:1: E302 expected 2 blank lines, found 1
+api/repositories/utilisateur_repository.py:23:1: E302 expected 2 blank lines, found 1
+api/repositories/utilisateur_repository.py:32:1: E302 expected 2 blank lines, found 1
+api/repositories/utilisateur_repository.py:36:1: E302 expected 2 blank lines, found 1
+api/repositories/utilisateur_repository.py:39:1: E302 expected 2 blank lines, found 1
+api/repositories/utilisateur_repository.py:42:1: E302 expected 2 blank lines, found 1
+api/repositories/utilisateur_repository.py:42:80: E501 line too long (98 > 79 characters)
+api/repositories/utilisateur_repository.py:43:80: E501 line too long (84 > 79 characters)
+api/routers/__init__.py:11:80: E501 line too long (80 > 79 characters)
+api/routers/__init__.py:36:40: W292 no newline at end of file
+api/routers/adresse_router.py:28:24: E251 unexpected spaces around keyword / parameter equals
+api/routers/adresse_router.py:28:26: E251 unexpected spaces around keyword / parameter equals
+api/routers/adresse_router.py:43:24: E251 unexpected spaces around keyword / parameter equals
+api/routers/adresse_router.py:43:26: E251 unexpected spaces around keyword / parameter equals
+api/routers/adresse_router.py:57:24: E251 unexpected spaces around keyword / parameter equals
+api/routers/adresse_router.py:57:26: E251 unexpected spaces around keyword / parameter equals
+api/routers/adresse_router.py:75:24: E251 unexpected spaces around keyword / parameter equals
+api/routers/adresse_router.py:75:26: E251 unexpected spaces around keyword / parameter equals
+api/routers/adresse_router.py:91:24: E251 unexpected spaces around keyword / parameter equals
+api/routers/adresse_router.py:91:26: E251 unexpected spaces around keyword / parameter equals
+api/routers/auth_router.py:17:80: E501 line too long (84 > 79 characters)
+api/routers/commande_router.py:4:80: E501 line too long (116 > 79 characters)
+api/routers/commande_router.py:17:80: E501 line too long (85 > 79 characters)
+api/routers/commande_router.py:23:1: E302 expected 2 blank lines, found 1
+api/routers/commande_router.py:24:30: E252 missing whitespace around parameter equals
+api/routers/commande_router.py:24:31: E252 missing whitespace around parameter equals
+api/routers/commande_router.py:27:1: E302 expected 2 blank lines, found 1
+api/routers/commande_router.py:28:47: E252 missing whitespace around parameter equals
+api/routers/commande_router.py:28:48: E252 missing whitespace around parameter equals
+api/routers/commande_router.py:34:1: E302 expected 2 blank lines, found 1
+api/routers/commande_router.py:35:5: E128 continuation line under-indented for visual indent
+api/routers/commande_router.py:36:61: E252 missing whitespace around parameter equals
+api/routers/commande_router.py:36:62: E252 missing whitespace around parameter equals
+api/routers/commande_router.py:39:1: E302 expected 2 blank lines, found 1
+api/routers/commande_router.py:40:5: E128 continuation line under-indented for visual indent
+api/routers/commande_router.py:41:79: E252 missing whitespace around parameter equals
+api/routers/commande_router.py:41:80: E501 line too long (96 > 79 characters)
+api/routers/commande_router.py:41:80: E252 missing whitespace around parameter equals
+api/routers/commande_router.py:47:1: E302 expected 2 blank lines, found 1
+api/routers/commande_router.py:48:5: E128 continuation line under-indented for visual indent
+api/routers/commande_router.py:49:50: E252 missing whitespace around parameter equals
+api/routers/commande_router.py:49:51: E252 missing whitespace around parameter equals
+api/routers/commande_router.py:53:52: W292 no newline at end of file
+api/routers/conditionnement_router.py:4:80: E501 line too long (137 > 79 characters)
+api/routers/conditionnement_router.py:9:80: E501 line too long (84 > 79 characters)
+api/routers/conditionnement_router.py:20:80: E501 line too long (84 > 79 characters)
+api/routers/conditionnement_router.py:23:1: E302 expected 2 blank lines, found 1
+api/routers/conditionnement_router.py:24:37: E252 missing whitespace around parameter equals
+api/routers/conditionnement_router.py:24:38: E252 missing whitespace around parameter equals
+api/routers/conditionnement_router.py:27:1: E302 expected 2 blank lines, found 1
+api/routers/conditionnement_router.py:27:80: E501 line too long (89 > 79 characters)
+api/routers/conditionnement_router.py:28:61: E252 missing whitespace around parameter equals
+api/routers/conditionnement_router.py:28:62: E252 missing whitespace around parameter equals
+api/routers/conditionnement_router.py:31:80: E501 line too long (81 > 79 characters)
+api/routers/conditionnement_router.py:34:1: E302 expected 2 blank lines, found 1
+api/routers/conditionnement_router.py:35:5: E128 continuation line under-indented for visual indent
+api/routers/conditionnement_router.py:36:80: E501 line too long (99 > 79 characters)
+api/routers/conditionnement_router.py:36:82: E252 missing whitespace around parameter equals
+api/routers/conditionnement_router.py:36:83: E252 missing whitespace around parameter equals
+api/routers/conditionnement_router.py:39:1: E302 expected 2 blank lines, found 1
+api/routers/conditionnement_router.py:39:80: E501 line too long (91 > 79 characters)
+api/routers/conditionnement_router.py:40:5: E128 continuation line under-indented for visual indent
+api/routers/conditionnement_router.py:41:80: E501 line too long (124 > 79 characters)
+api/routers/conditionnement_router.py:41:107: E252 missing whitespace around parameter equals
+api/routers/conditionnement_router.py:41:108: E252 missing whitespace around parameter equals
+api/routers/conditionnement_router.py:44:80: E501 line too long (81 > 79 characters)
+api/routers/conditionnement_router.py:45:80: E501 line too long (86 > 79 characters)
+api/routers/conditionnement_router.py:47:1: E302 expected 2 blank lines, found 1
+api/routers/conditionnement_router.py:47:80: E501 line too long (92 > 79 characters)
+api/routers/conditionnement_router.py:48:5: E128 continuation line under-indented for visual indent
+api/routers/conditionnement_router.py:49:64: E252 missing whitespace around parameter equals
+api/routers/conditionnement_router.py:49:65: E252 missing whitespace around parameter equals
+api/routers/conditionnement_router.py:49:80: E501 line too long (81 > 79 characters)
+api/routers/conditionnement_router.py:52:80: E501 line too long (81 > 79 characters)
+api/routers/conditionnement_router.py:53:66: W292 no newline at end of file
+api/routers/dependencies.py:39:80: E501 line too long (84 > 79 characters)
+api/routers/dependencies.py:47:22: W292 no newline at end of file
+api/routers/detail_commande_objet_router.py:20:80: E501 line too long (94 > 79 characters)
+api/routers/detail_commande_objet_router.py:27:80: E501 line too long (85 > 79 characters)
+api/routers/detail_commande_objet_router.py:39:80: E501 line too long (85 > 79 characters)
+api/routers/detail_commande_objet_router.py:52:80: E501 line too long (85 > 79 characters)
+api/routers/detail_commande_objet_router.py:64:80: E501 line too long (93 > 79 characters)
+api/routers/detail_commande_router.py:4:80: E501 line too long (136 > 79 characters)
+api/routers/detail_commande_router.py:9:80: E501 line too long (81 > 79 characters)
+api/routers/detail_commande_router.py:17:80: E501 line too long (85 > 79 characters)
+api/routers/detail_commande_router.py:23:1: E302 expected 2 blank lines, found 1
+api/routers/detail_commande_router.py:24:37: E252 missing whitespace around parameter equals
+api/routers/detail_commande_router.py:24:38: E252 missing whitespace around parameter equals
+api/routers/detail_commande_router.py:27:1: E302 expected 2 blank lines, found 1
+api/routers/detail_commande_router.py:27:80: E501 line too long (88 > 79 characters)
+api/routers/detail_commande_router.py:28:61: E252 missing whitespace around parameter equals
+api/routers/detail_commande_router.py:28:62: E252 missing whitespace around parameter equals
+api/routers/detail_commande_router.py:31:80: E501 line too long (84 > 79 characters)
+api/routers/detail_commande_router.py:34:1: E302 expected 2 blank lines, found 1
+api/routers/detail_commande_router.py:35:5: E128 continuation line under-indented for visual indent
+api/routers/detail_commande_router.py:36:80: E501 line too long (98 > 79 characters)
+api/routers/detail_commande_router.py:36:81: E252 missing whitespace around parameter equals
+api/routers/detail_commande_router.py:36:82: E252 missing whitespace around parameter equals
+api/routers/detail_commande_router.py:39:1: E302 expected 2 blank lines, found 1
+api/routers/detail_commande_router.py:39:80: E501 line too long (90 > 79 characters)
+api/routers/detail_commande_router.py:40:5: E128 continuation line under-indented for visual indent
+api/routers/detail_commande_router.py:41:80: E501 line too long (123 > 79 characters)
+api/routers/detail_commande_router.py:41:106: E252 missing whitespace around parameter equals
+api/routers/detail_commande_router.py:41:107: E252 missing whitespace around parameter equals
+api/routers/detail_commande_router.py:44:80: E501 line too long (84 > 79 characters)
+api/routers/detail_commande_router.py:45:80: E501 line too long (86 > 79 characters)
+api/routers/detail_commande_router.py:47:1: E302 expected 2 blank lines, found 1
+api/routers/detail_commande_router.py:47:80: E501 line too long (91 > 79 characters)
+api/routers/detail_commande_router.py:48:5: E128 continuation line under-indented for visual indent
+api/routers/detail_commande_router.py:49:64: E252 missing whitespace around parameter equals
+api/routers/detail_commande_router.py:49:65: E252 missing whitespace around parameter equals
+api/routers/detail_commande_router.py:49:80: E501 line too long (81 > 79 characters)
+api/routers/detail_commande_router.py:53:66: W292 no newline at end of file
+api/routers/objet_router.py:28:60: E231 missing whitespace after ','
+api/routers/objet_router.py:28:80: E501 line too long (95 > 79 characters)
+api/routers/objet_router.py:33:80: E501 line too long (108 > 79 characters)
+api/routers/objet_router.py:34:80: E501 line too long (86 > 79 characters)
+api/routers/objet_router.py:41:80: E501 line too long (109 > 79 characters)
+api/routers/objet_router.py:46:46: W292 no newline at end of file
+api/routers/rel_cond_router.py:6:80: E501 line too long (81 > 79 characters)
+api/routers/rel_cond_router.py:15:80: E501 line too long (82 > 79 characters)
+api/routers/utilisateur_router.py:33:80: E501 line too long (80 > 79 characters)
+api/schemas/__init__.py:1:1: F401 '.client_schema.ClientCreate' imported but unused
+api/schemas/__init__.py:1:1: F401 '.client_schema.ClientUpdate' imported but unused
+api/schemas/__init__.py:1:1: F401 '.client_schema.ClientRead' imported but unused
+api/schemas/__init__.py:2:1: F401 '.objet_schema.ObjetPost' imported but unused
+api/schemas/__init__.py:2:1: F401 '.objet_schema.ObjetPatch' imported but unused
+api/schemas/__init__.py:2:1: F401 '.objet_schema.ObjetInDB' imported but unused
+api/schemas/__init__.py:3:1: F401 '.commande_schema.CommandePost' imported but unused
+api/schemas/__init__.py:3:1: F401 '.commande_schema.CommandePatch' imported but unused
+api/schemas/__init__.py:3:1: F401 '.commande_schema.CommandeInDB' imported but unused
+api/schemas/__init__.py:4:1: F401 '.conditionnement_schema.ConditionnementPost' imported but unused
+api/schemas/__init__.py:4:1: F401 '.conditionnement_schema.ConditionnementPatch' imported but unused
+api/schemas/__init__.py:4:1: F401 '.conditionnement_schema.ConditionnementInDB' imported but unused
+api/schemas/__init__.py:4:80: E501 line too long (98 > 79 characters)
+api/schemas/__init__.py:5:1: F401 '.detail_commande_schema.DetailCommandePost' imported but unused
+api/schemas/__init__.py:5:1: F401 '.detail_commande_schema.DetailCommandePatch' imported but unused
+api/schemas/__init__.py:5:1: F401 '.detail_commande_schema.DetailCommandeInDB' imported but unused
+api/schemas/__init__.py:5:80: E501 line too long (95 > 79 characters)
+api/schemas/__init__.py:6:1: F401 '.utilisateur_schema.UtilisateurCreate' imported but unused
+api/schemas/__init__.py:6:1: F401 '.utilisateur_schema.UtilisateurRead' imported but unused
+api/schemas/__init__.py:6:1: F401 '.utilisateur_schema.UtilisateurUpdate' imported but unused
+api/schemas/__init__.py:6:1: F401 '.utilisateur_schema.LoginRequest' imported but unused
+api/schemas/__init__.py:6:1: F401 '.utilisateur_schema.Token' imported but unused
+api/schemas/__init__.py:6:1: F401 '.utilisateur_schema.TokenData' imported but unused
+api/schemas/__init__.py:6:80: E501 line too long (119 > 79 characters)
+api/schemas/__init__.py:7:1: F401 '.role_schema.RoleCreate' imported but unused
+api/schemas/__init__.py:7:1: F401 '.role_schema.RoleUpdate' imported but unused
+api/schemas/__init__.py:7:1: F401 '.role_schema.RoleRead' imported but unused
+api/schemas/__init__.py:8:1: F401 '.commune_schema.CommuneCreate' imported but unused
+api/schemas/__init__.py:8:1: F401 '.commune_schema.CommuneUpdate' imported but unused
+api/schemas/__init__.py:8:1: F401 '.commune_schema.CommuneRead' imported but unused
+api/schemas/__init__.py:9:1: F401 '.adresse_schema.AdresseCreate' imported but unused
+api/schemas/__init__.py:9:1: F401 '.adresse_schema.AdresseUpdate' imported but unused
+api/schemas/__init__.py:9:1: F401 '.adresse_schema.AdresseRead' imported but unused
+api/schemas/__init__.py:10:1: F401 '.detail_commande_objet_schema.DetailCommandeObjetCreate' imported but unused
+api/schemas/__init__.py:10:1: F401 '.detail_commande_objet_schema.DetailCommandeObjetUpdate' imported but unused
+api/schemas/__init__.py:10:1: F401 '.detail_commande_objet_schema.DetailCommandeObjetRead' imported but unused
+api/schemas/__init__.py:10:80: E501 line too long (121 > 79 characters)
+api/schemas/__init__.py:11:1: F401 '.rel_cond_schema.RelCondCreate' imported but unused
+api/schemas/__init__.py:11:1: F401 '.rel_cond_schema.RelCondUpdate' imported but unused
+api/schemas/__init__.py:11:1: F401 '.rel_cond_schema.RelCondRead' imported but unused
+api/schemas/__init__.py:12:1: W391 blank line at end of file
+api/schemas/commande_schema.py:5:1: E302 expected 2 blank lines, found 1
+api/schemas/commande_schema.py:6:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:7:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:8:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:9:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:10:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:11:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:12:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:13:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:13:10: E203 whitespace before ':'
+api/schemas/commande_schema.py:14:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:15:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:16:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:16:1: W293 blank line contains whitespace
+api/schemas/commande_schema.py:17:1: E302 expected 2 blank lines, found 1
+api/schemas/commande_schema.py:18:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:19:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:21:1: E302 expected 2 blank lines, found 1
+api/schemas/commande_schema.py:22:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:23:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:24:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:25:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:26:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:27:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:28:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:29:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:29:10: E203 whitespace before ':'
+api/schemas/commande_schema.py:30:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:31:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:33:1: E302 expected 2 blank lines, found 1
+api/schemas/commande_schema.py:34:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:35:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:37:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:38:1: W191 indentation contains tabs
+api/schemas/commande_schema.py:38:25: W292 no newline at end of file
+api/schemas/conditionnement_schema.py:4:1: E302 expected 2 blank lines, found 1
+api/schemas/conditionnement_schema.py:5:1: W191 indentation contains tabs
+api/schemas/conditionnement_schema.py:6:1: W191 indentation contains tabs
+api/schemas/conditionnement_schema.py:7:1: W191 indentation contains tabs
+api/schemas/conditionnement_schema.py:8:1: W191 indentation contains tabs
+api/schemas/conditionnement_schema.py:9:1: W191 indentation contains tabs
+api/schemas/conditionnement_schema.py:9:1: W293 blank line contains whitespace
+api/schemas/conditionnement_schema.py:10:1: E302 expected 2 blank lines, found 1
+api/schemas/conditionnement_schema.py:11:1: W191 indentation contains tabs
+api/schemas/conditionnement_schema.py:12:1: W191 indentation contains tabs
+api/schemas/conditionnement_schema.py:14:1: E302 expected 2 blank lines, found 1
+api/schemas/conditionnement_schema.py:15:1: W191 indentation contains tabs
+api/schemas/conditionnement_schema.py:16:1: W191 indentation contains tabs
+api/schemas/conditionnement_schema.py:17:1: W191 indentation contains tabs
+api/schemas/conditionnement_schema.py:18:1: W191 indentation contains tabs
+api/schemas/conditionnement_schema.py:19:1: W191 indentation contains tabs
+api/schemas/conditionnement_schema.py:20:1: W191 indentation contains tabs
+api/schemas/conditionnement_schema.py:22:1: E302 expected 2 blank lines, found 1
+api/schemas/conditionnement_schema.py:23:1: W191 indentation contains tabs
+api/schemas/conditionnement_schema.py:24:1: W191 indentation contains tabs
+api/schemas/conditionnement_schema.py:26:1: W191 indentation contains tabs
+api/schemas/conditionnement_schema.py:27:1: W191 indentation contains tabs
+api/schemas/conditionnement_schema.py:27:25: W292 no newline at end of file
+api/schemas/detail_commande_schema.py:4:1: E302 expected 2 blank lines, found 1
+api/schemas/detail_commande_schema.py:5:1: W191 indentation contains tabs
+api/schemas/detail_commande_schema.py:6:1: W191 indentation contains tabs
+api/schemas/detail_commande_schema.py:7:1: W191 indentation contains tabs
+api/schemas/detail_commande_schema.py:8:1: W191 indentation contains tabs
+api/schemas/detail_commande_schema.py:9:1: W191 indentation contains tabs
+api/schemas/detail_commande_schema.py:10:1: W191 indentation contains tabs
+api/schemas/detail_commande_schema.py:10:1: W293 blank line contains whitespace
+api/schemas/detail_commande_schema.py:11:1: E302 expected 2 blank lines, found 1
+api/schemas/detail_commande_schema.py:12:1: W191 indentation contains tabs
+api/schemas/detail_commande_schema.py:13:1: W191 indentation contains tabs
+api/schemas/detail_commande_schema.py:15:1: E302 expected 2 blank lines, found 1
+api/schemas/detail_commande_schema.py:16:1: W191 indentation contains tabs
+api/schemas/detail_commande_schema.py:17:1: W191 indentation contains tabs
+api/schemas/detail_commande_schema.py:18:1: W191 indentation contains tabs
+api/schemas/detail_commande_schema.py:19:1: W191 indentation contains tabs
+api/schemas/detail_commande_schema.py:20:1: W191 indentation contains tabs
+api/schemas/detail_commande_schema.py:21:1: W191 indentation contains tabs
+api/schemas/detail_commande_schema.py:22:1: W191 indentation contains tabs
+api/schemas/detail_commande_schema.py:24:1: E302 expected 2 blank lines, found 1
+api/schemas/detail_commande_schema.py:25:1: W191 indentation contains tabs
+api/schemas/detail_commande_schema.py:26:1: W191 indentation contains tabs
+api/schemas/detail_commande_schema.py:28:1: W191 indentation contains tabs
+api/schemas/detail_commande_schema.py:29:1: W191 indentation contains tabs
+api/schemas/detail_commande_schema.py:29:25: W292 no newline at end of file
+api/schemas/utilisateur_schema.py:4:1: E302 expected 2 blank lines, found 1
+api/schemas/utilisateur_schema.py:11:1: E302 expected 2 blank lines, found 1
+api/schemas/utilisateur_schema.py:16:1: E302 expected 2 blank lines, found 1
+api/schemas/utilisateur_schema.py:20:1: E302 expected 2 blank lines, found 1
+api/schemas/utilisateur_schema.py:27:1: E302 expected 2 blank lines, found 1
+api/schemas/utilisateur_schema.py:35:1: E302 expected 2 blank lines, found 1
+api/schemas/utilisateur_schema.py:39:1: E302 expected 2 blank lines, found 1
+api/schemas/utilisateur_schema.py:43:1: E302 expected 2 blank lines, found 1
+api/schemas/utilisateur_schema.py:45:20: W292 no newline at end of file
+api/services/__init__.py:1:1: F401 '.client_service.create_client' imported but unused
+api/services/__init__.py:1:1: F401 '.client_service.update_client' imported but unused
+api/services/__init__.py:1:1: F401 '.client_service.delete_client' imported but unused
+api/services/__init__.py:1:1: F401 '.client_service.list_clients' imported but unused
+api/services/__init__.py:1:80: E501 line too long (85 > 79 characters)
+api/services/__init__.py:2:1: F401 '.objet_service.ObjetService' imported but unused
+api/services/__init__.py:3:1: F401 '.commande_service.CommandeService' imported but unused
+api/services/__init__.py:4:1: F401 '.conditionnement_service.ConditionnementService' imported but unused
+api/services/__init__.py:5:1: F401 '.detail_commande_service.DetailCommandeService' imported but unused
+api/services/__init__.py:6:1: F401 '.auth_service.login' imported but unused
+api/services/__init__.py:7:1: F401 '.security_service.verify_password' imported but unused
+api/services/__init__.py:7:1: F401 '.security_service.get_password_hash' imported but unused
+api/services/__init__.py:7:1: F401 '.security_service.create_access_token' imported but unused
+api/services/__init__.py:7:1: F401 '.security_service.decode_access_token' imported but unused
+api/services/__init__.py:7:80: E501 line too long (108 > 79 characters)
+api/services/__init__.py:8:1: F401 '.utilisateur_service.create_utilisateur' imported but unused
+api/services/__init__.py:8:1: F401 '.utilisateur_service.update_utilisateur' imported but unused
+api/services/__init__.py:8:1: F401 '.utilisateur_service.delete_utilisateur' imported but unused
+api/services/__init__.py:8:1: F401 '.utilisateur_service.list_utilisateurs' imported but unused
+api/services/__init__.py:8:80: E501 line too long (111 > 79 characters)
+api/services/__init__.py:8:93: E231 missing whitespace after ','
+api/services/__init__.py:9:1: F401 '.role_service.create_role' imported but unused
+api/services/__init__.py:9:1: F401 '.role_service.list_roles' imported but unused
+api/services/__init__.py:9:1: F401 '.role_service.update_role' imported but unused
+api/services/__init__.py:9:1: F401 '.role_service.delete_role' imported but unused
+api/services/__init__.py:10:1: F401 '.commune_service.create_commune' imported but unused
+api/services/__init__.py:10:1: F401 '.commune_service.update_commune' imported but unused
+api/services/__init__.py:10:1: F401 '.commune_service.delete_commune' imported but unused
+api/services/__init__.py:10:1: F401 '.commune_service.list_communes' imported but unused
+api/services/__init__.py:10:80: E501 line too long (90 > 79 characters)
+api/services/__init__.py:11:1: F401 '.adresse_service.create_adresse' imported but unused
+api/services/__init__.py:11:1: F401 '.adresse_service.update_adresse' imported but unused
+api/services/__init__.py:11:1: F401 '.adresse_service.delete_adresse' imported but unused
+api/services/__init__.py:11:1: F401 '.adresse_service.list_adresses' imported but unused
+api/services/__init__.py:11:80: E501 line too long (90 > 79 characters)
+api/services/__init__.py:12:1: F401 '.detail_commande_objet_service.create_detail_commande_objet' imported but unused
+api/services/__init__.py:12:1: F401 '.detail_commande_objet_service.update_detail_commande_objet' imported but unused
+api/services/__init__.py:12:1: F401 '.detail_commande_objet_service.delete_detail_commande_objet' imported but unused
+api/services/__init__.py:12:1: F401 '.detail_commande_objet_service.list_detail_commande_objets' imported but unused
+api/services/__init__.py:12:80: E501 line too long (162 > 79 characters)
+api/services/__init__.py:13:1: F401 '.rel_cond_service.create_rel_cond' imported but unused
+api/services/__init__.py:13:1: F401 '.rel_cond_service.update_rel_cond' imported but unused
+api/services/__init__.py:13:1: F401 '.rel_cond_service.delete_rel_cond' imported but unused
+api/services/__init__.py:13:1: F401 '.rel_cond_service.list_rel_conds' imported but unused
+api/services/__init__.py:13:80: E501 line too long (95 > 79 characters)
+api/services/auth_service.py:7:1: E302 expected 2 blank lines, found 1
+api/services/auth_service.py:15:1: E302 expected 2 blank lines, found 1
+api/services/client_service.py:58:46: W292 no newline at end of file
+api/services/commande_service.py:5:1: E302 expected 2 blank lines, found 1
+api/services/commande_service.py:7:1: W293 blank line contains whitespace
+api/services/commande_service.py:8:80: E501 line too long (82 > 79 characters)
+api/services/commande_service.py:15:1: W293 blank line contains whitespace
+api/services/commande_service.py:18:1: W293 blank line contains whitespace
+api/services/commande_service.py:21:1: W293 blank line contains whitespace
+api/services/commande_service.py:26:1: W293 blank line contains whitespace
+api/services/commande_service.py:27:80: E501 line too long (85 > 79 characters)
+api/services/commande_service.py:31:1: W293 blank line contains whitespace
+api/services/commande_service.py:33:64: W292 no newline at end of file
+api/services/commune_service.py:14:80: E501 line too long (81 > 79 characters)
+api/services/conditionnement_service.py:5:1: E302 expected 2 blank lines, found 1
+api/services/conditionnement_service.py:7:1: W293 blank line contains whitespace
+api/services/conditionnement_service.py:8:80: E501 line too long (89 > 79 characters)
+api/services/conditionnement_service.py:15:1: W293 blank line contains whitespace
+api/services/conditionnement_service.py:18:1: W293 blank line contains whitespace
+api/services/conditionnement_service.py:20:80: E501 line too long (80 > 79 characters)
+api/services/conditionnement_service.py:21:1: W293 blank line contains whitespace
+api/services/conditionnement_service.py:22:80: E501 line too long (92 > 79 characters)
+api/services/conditionnement_service.py:26:1: W293 blank line contains whitespace
+api/services/conditionnement_service.py:27:80: E501 line too long (113 > 79 characters)
+api/services/conditionnement_service.py:30:80: E501 line too long (93 > 79 characters)
+api/services/conditionnement_service.py:31:1: W293 blank line contains whitespace
+api/services/conditionnement_service.py:33:78: W292 no newline at end of file
+api/services/detail_commande_objet_service.py:15:80: E501 line too long (97 > 79 characters)
+api/services/detail_commande_objet_service.py:24:80: E501 line too long (104 > 79 characters)
+api/services/detail_commande_objet_service.py:35:80: E501 line too long (117 > 79 characters)
+api/services/detail_commande_objet_service.py:58:80: E501 line too long (107 > 79 characters)
+api/services/detail_commande_service.py:5:1: E302 expected 2 blank lines, found 1
+api/services/detail_commande_service.py:7:1: W293 blank line contains whitespace
+api/services/detail_commande_service.py:8:80: E501 line too long (89 > 79 characters)
+api/services/detail_commande_service.py:15:1: W293 blank line contains whitespace
+api/services/detail_commande_service.py:18:1: W293 blank line contains whitespace
+api/services/detail_commande_service.py:20:80: E501 line too long (80 > 79 characters)
+api/services/detail_commande_service.py:21:1: W293 blank line contains whitespace
+api/services/detail_commande_service.py:22:80: E501 line too long (91 > 79 characters)
+api/services/detail_commande_service.py:26:1: W293 blank line contains whitespace
+api/services/detail_commande_service.py:27:80: E501 line too long (112 > 79 characters)
+api/services/detail_commande_service.py:30:80: E501 line too long (93 > 79 characters)
+api/services/detail_commande_service.py:31:1: W293 blank line contains whitespace
+api/services/detail_commande_service.py:33:78: W292 no newline at end of file
+api/services/objet_service.py:5:1: E302 expected 2 blank lines, found 1
+api/services/objet_service.py:9:1: W293 blank line contains whitespace
+api/services/objet_service.py:13:1: W293 blank line contains whitespace
+api/services/objet_service.py:14:5: E303 too many blank lines (2)
+api/services/objet_service.py:16:1: W293 blank line contains whitespace
+api/services/objet_service.py:17:1: W293 blank line contains whitespace
+api/services/objet_service.py:18:5: E303 too many blank lines (2)
+api/services/objet_service.py:20:1: W293 blank line contains whitespace
+api/services/objet_service.py:21:1: W293 blank line contains whitespace
+api/services/objet_service.py:22:5: E303 too many blank lines (2)
+api/services/objet_service.py:26:1: W293 blank line contains whitespace
+api/services/objet_service.py:27:1: W293 blank line contains whitespace
+api/services/objet_service.py:28:5: E303 too many blank lines (2)
+api/services/objet_service.py:32:1: W293 blank line contains whitespace
+api/services/objet_service.py:33:1: W293 blank line contains whitespace
+api/services/objet_service.py:34:5: E303 too many blank lines (2)
+api/services/objet_service.py:35:58: W292 no newline at end of file
+api/services/rel_cond_service.py:14:80: E501 line too long (90 > 79 characters)
+api/services/rel_cond_service.py:32:80: E501 line too long (82 > 79 characters)
+api/services/security_service.py:11:1: E402 module level import not at top of file
+api/services/security_service.py:14:80: E501 line too long (81 > 79 characters)
+api/services/security_service.py:16:1: E302 expected 2 blank lines, found 1
+api/services/security_service.py:19:1: E302 expected 2 blank lines, found 1
+api/services/security_service.py:22:1: E302 expected 2 blank lines, found 1
+api/services/security_service.py:23:80: E501 line too long (81 > 79 characters)
+api/services/security_service.py:38:1: E302 expected 2 blank lines, found 1
+api/services/utilisateur_service.py:13:80: E501 line too long (86 > 79 characters)
+api/services/utilisateur_service.py:52:80: E501 line too long (80 > 79 characters)
