@@ -32,13 +32,13 @@ jobs:
           SEED_DB: "false"
           SEED_ADMIN: "false"
         run: |
-          echo "🗄️ Starting MariaDB first..."
+          echo "🗄️ Starting MariaDB..."
           docker compose up -d db
           
-          echo "⏳ Waiting for MariaDB to be fully ready..."
+          echo "⏳ Waiting for MariaDB to be ready..."
           for i in {1..60}; do
             if docker compose exec -T db mysqladmin ping -h localhost -u admin -pAdmin123! --silent 2>/dev/null; then
-              echo "✓ MariaDB is ready ($i attempts)"
+              echo "✓ MariaDB is ready after $i attempts"
               break
             fi
             if [ $i -eq 60 ]; then
@@ -49,50 +49,90 @@ jobs:
             sleep 2
           done
           
-          # Attente supplémentaire pour stabilisation
-          echo "⏳ Additional wait for MariaDB stabilization..."
-          sleep 5
+          # Attente supplémentaire pour stabilisation complète
+          echo "⏳ Waiting for MariaDB to stabilize..."
+          sleep 10
 
       - name: Start FastAPI application
         env:
           SEED_DB: "false"
           SEED_ADMIN: "false"
         run: |
-          echo "🚀 Starting FastAPI..."
+          echo "🚀 Building and starting FastAPI..."
           docker compose up -d --build fastapi
           
-          echo "⏳ Waiting for FastAPI to start..."
+          echo "📊 Waiting for container to start..."
           sleep 10
           
           echo "📊 Services status:"
           docker compose ps
           
-          echo "📝 FastAPI logs:"
-          docker compose logs fastapi --tail=30
+          echo ""
+          echo "📝 FastAPI startup logs:"
+          docker compose logs fastapi
 
-      - name: Verify services health
+      - name: Wait for FastAPI to be ready
         run: |
-          echo "🔍 Verifying all services..."
+          echo "🔍 Waiting for FastAPI to be ready..."
           
-          # Vérifier MariaDB
-          if ! docker compose exec -T db mysqladmin ping -h localhost -u admin -pAdmin123! --silent; then
-            echo "❌ MariaDB health check failed"
-            docker compose logs db
-            exit 1
-          fi
+          # Attendre que le conteneur soit vraiment démarré
+          for i in {1..30}; do
+            if docker compose ps fastapi | grep -q "Up"; then
+              echo "✓ FastAPI container is up"
+              break
+            fi
+            echo "Waiting for FastAPI container... ($i/30)"
+            sleep 2
+          done
           
-          # Vérifier FastAPI
-          if ! docker compose exec -T fastapi python -c "from api.database import engine; engine.connect()" 2>/dev/null; then
-            echo "⚠️ FastAPI can't connect to database yet, waiting more..."
-            sleep 10
-            docker compose exec -T fastapi python -c "from api.database import engine; engine.connect()" || {
-              echo "❌ FastAPI database connection failed"
+          # Attendre que l'API réponde sur http://localhost:8000
+          echo "🔍 Checking API endpoint availability..."
+          for i in {1..60}; do
+            if curl -sf http://localhost:8000/docs > /dev/null 2>&1; then
+              echo "✓ FastAPI is responding on http://localhost:8000"
+              exit 0
+            fi
+            
+            # Vérifier aussi si le conteneur est toujours en vie
+            if ! docker compose ps fastapi | grep -q "Up"; then
+              echo "❌ FastAPI container died"
               docker compose logs fastapi
               exit 1
-            }
-          fi
+            fi
+            
+            echo "Waiting for FastAPI to respond... ($i/60)"
+            sleep 3
+          done
           
-          echo "✓ All services are healthy"
+          echo "❌ FastAPI did not become ready in time"
+          echo ""
+          echo "=== Container Status ==="
+          docker compose ps
+          echo ""
+          echo "=== FastAPI Logs ==="
+          docker compose logs fastapi
+          echo ""
+          echo "=== MariaDB Logs ==="
+          docker compose logs db
+          exit 1
+
+      - name: Verify database connection from FastAPI
+        run: |
+          echo "🔍 Testing database connection from FastAPI container..."
+          docker compose exec -T fastapi python -c "
+          from api.database import engine
+          try:
+              with engine.connect() as conn:
+                  print('✓ Database connection successful')
+          except Exception as e:
+              print(f'❌ Database connection failed: {e}')
+              exit(1)
+          " || {
+            echo "❌ FastAPI cannot connect to database"
+            docker compose logs fastapi
+            docker compose logs db
+            exit 1
+          }
 
       - name: Install test dependencies in container
         run: |
@@ -114,11 +154,15 @@ jobs:
         if: always()
         run: |
           echo "📋 Copying reports from container..."
-          docker cp $(docker compose ps -q fastapi):/code/reports ./reports 2>/dev/null || {
-            echo "⚠️  Could not copy reports from /code/reports"
-            # Essayer un chemin alternatif
-            docker compose exec -T fastapi find / -name "pytest-junit.xml" 2>/dev/null || true
-          }
+          container_id=$(docker compose ps -q fastapi)
+          if [ -n "$container_id" ]; then
+            docker cp ${container_id}:/code/reports ./reports 2>/dev/null || {
+              echo "⚠️ Could not copy reports, checking if they exist..."
+              docker compose exec -T fastapi ls -la /code/reports || true
+            }
+          else
+            echo "⚠️ FastAPI container not found"
+          fi
 
       - name: Upload test reports
         if: always()
@@ -127,6 +171,7 @@ jobs:
           name: unit-test-reports
           path: reports/
           retention-days: 30
+          if-no-files-found: warn
 
       - name: Upload coverage report
         if: always()
@@ -149,10 +194,13 @@ jobs:
         if: failure()
         run: |
           echo "=== FastAPI Logs ==="
-          docker compose logs fastapi --tail=200
+          docker compose logs fastapi --tail=300
           echo ""
           echo "=== MariaDB Logs ==="
           docker compose logs db --tail=100
+          echo ""
+          echo "=== Container Status ==="
+          docker compose ps
 
       - name: Cleanup after unit tests
         if: always()
@@ -186,7 +234,7 @@ jobs:
           echo "⏳ Waiting for MariaDB to be ready..."
           for i in {1..60}; do
             if docker compose exec -T db mysqladmin ping -h localhost -u admin -pAdmin123! --silent 2>/dev/null; then
-              echo "✓ MariaDB is ready ($i attempts)"
+              echo "✓ MariaDB is ready after $i attempts"
               break
             fi
             if [ $i -eq 60 ]; then
@@ -197,8 +245,8 @@ jobs:
             sleep 2
           done
           
-          # Attente supplémentaire pour stabilisation
-          sleep 5
+          echo "⏳ Waiting for MariaDB to stabilize..."
+          sleep 10
 
       - name: Start FastAPI with seeding
         env:
@@ -207,44 +255,71 @@ jobs:
           ADMIN_EMAIL: "admin@digicheese.com"
           ADMIN_PASSWORD: "Admin123!"
         run: |
-          echo "🚀 Starting FastAPI with seeding..."
+          echo "🚀 Starting FastAPI with seeding enabled..."
           docker compose up -d --build fastapi
           
-          echo "⏳ Waiting for seeding to complete (may take time)..."
-          sleep 30
+          echo "⏳ Waiting for FastAPI to start (seeding may take time)..."
+          sleep 15
           
           echo "📊 Container status:"
           docker compose ps
           
-          echo "📝 FastAPI logs:"
+          echo ""
+          echo "📝 Recent FastAPI logs:"
           docker compose logs fastapi --tail=50
 
-      - name: Wait for API health
+      - name: Wait for API to be ready
         run: |
-          echo "🔍 Checking API health..."
-          for i in {1..90}; do
-            if curl -sSf http://localhost:8000/docs > /dev/null 2>&1; then
-              echo "✓ API is up and responding ($i attempts)"
+          echo "🔍 Checking API health on http://localhost:8000..."
+          
+          for i in {1..120}; do
+            # Vérifier si le conteneur est toujours en vie
+            if ! docker compose ps fastapi | grep -q "Up"; then
+              echo "❌ FastAPI container has stopped or crashed"
+              docker compose logs fastapi
+              exit 1
+            fi
+            
+            # Vérifier si l'API répond
+            if curl -sf http://localhost:8000/docs > /dev/null 2>&1; then
+              echo "✓ API is ready and responding after $i attempts"
               exit 0
             fi
-            echo "Waiting for API... ($i/90)"
-            sleep 2
+            
+            # Logs progressifs pour debug
+            if [ $((i % 20)) -eq 0 ]; then
+              echo ""
+              echo "Still waiting... Showing recent logs:"
+              docker compose logs fastapi --tail=20
+              echo ""
+            fi
+            
+            echo "Waiting for API... ($i/120)"
+            sleep 3
           done
           
-          echo "❌ API did not start in time"
-          echo "=== FastAPI Logs ==="
+          echo "❌ API did not become ready in time"
+          echo ""
+          echo "=== Final Container Status ==="
+          docker compose ps
+          echo ""
+          echo "=== Final FastAPI Logs ==="
           docker compose logs fastapi --tail=200
           echo ""
           echo "=== MariaDB Logs ==="
           docker compose logs db --tail=100
           exit 1
 
-      - name: Verify API endpoints
+      - name: Test API endpoints
         run: |
           echo "🧪 Testing API endpoints..."
-          curl -s http://localhost:8000/docs | head -20
+          
+          echo "Testing /docs endpoint:"
+          curl -v http://localhost:8000/docs 2>&1 | head -30
+          
           echo ""
-          echo "✓ API is responding"
+          echo "Testing /api/v1 endpoint (if exists):"
+          curl -v http://localhost:8000/api/v1/ 2>&1 | head -20 || echo "Endpoint may not exist"
 
       - name: Prepare performance test directories
         run: |
@@ -259,6 +334,7 @@ jobs:
             local duration=$2
             local label=$3
             
+            echo ""
             echo "📊 Running k6 with ${vus} VUs (${label})..."
             docker run --rm --network host \
               -v "${PWD}:/work" -w /work \
@@ -296,14 +372,6 @@ jobs:
           
           echo "📊 Generating performance report..."
           
-          if [ -f "performance/ci/parse_k6.py" ]; then
-            python performance/ci/parse_k6.py \
-              --input performance/results \
-              --output reports || create_fallback_report
-          else
-            create_fallback_report
-          fi
-          
           # Fonction pour créer un rapport de secours
           create_fallback_report() {
             cat > reports/REPORT.md << 'EOF'
@@ -327,6 +395,15 @@ jobs:
           4. Investigate any failures in the 100 VU test
           EOF
           }
+          
+          if [ -f "performance/ci/parse_k6.py" ]; then
+            python performance/ci/parse_k6.py \
+              --input performance/results \
+              --output reports || create_fallback_report
+          else
+            echo "ℹ️ parse_k6.py not found, creating basic report"
+            create_fallback_report
+          fi
 
       - name: Display generated report
         if: always()
@@ -359,10 +436,13 @@ jobs:
         if: failure()
         run: |
           echo "=== FastAPI Logs ==="
-          docker compose logs fastapi --tail=200
+          docker compose logs fastapi --tail=300
           echo ""
           echo "=== MariaDB Logs ==="
           docker compose logs db --tail=100
+          echo ""
+          echo "=== Container Status ==="
+          docker compose ps
 
       - name: Cleanup
         if: always()
