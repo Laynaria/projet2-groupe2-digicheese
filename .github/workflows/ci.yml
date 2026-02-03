@@ -6,15 +6,16 @@ on:
   pull_request:
 
 env:
-  # Configuration commune pour tous les jobs
+  # Variables d'authentification
   SECRET_KEY: "test-secret-key-for-ci-only"
   ALGORITHM: "HS256"
   ACCESS_TOKEN_EXPIRE_MINUTES: "30"
   USER: "admin"
   PASSWORD: "Admin123!"
+
+  # Configuration base de données
   DATABASE: "digicheese"
   MYSQL_ROOT_PASSWORD: "securepassword"
-  # Variables supplémentaires manquantes
   DB_USER: "admin"
   DB_PASSWORD: "Admin123!"
   DB_HOST: "db"
@@ -34,6 +35,8 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      # Création du fichier .env pour Docker Compose
+      # Les variables d'environnement doivent être disponibles pour les conteneurs
       - name: Create .env file for Docker Compose
         run: |
           cat > .env << EOF
@@ -66,116 +69,101 @@ jobs:
           SEED_NB_ADRESSES=60
           EOF
 
-      - name: Start database first
+      # Démarrage de la base de données MariaDB
+      - name: Start database
         run: |
-          echo "🗄️ Starting MariaDB..."
           docker compose up -d db
           
-          echo "⏳ Waiting for MariaDB to be ready..."
+          # Attente de la disponibilité de MariaDB (timeout: 120 secondes)
           for i in {1..60}; do
             if docker compose exec -T db mysqladmin ping -h localhost -u admin -pAdmin123! --silent 2>/dev/null; then
-              echo "✓ MariaDB is ready after $i attempts"
+              echo "MariaDB ready after $i attempts"
               break
             fi
             if [ $i -eq 60 ]; then
-              echo "❌ MariaDB failed to start"
+              echo "MariaDB startup timeout"
               docker compose logs db
               exit 1
             fi
             sleep 2
           done
           
-          # Attente supplémentaire pour stabilisation complète
-          echo "⏳ Waiting for MariaDB to stabilize..."
+          # Délai supplémentaire pour stabilisation
           sleep 10
 
+      # Démarrage de l'application FastAPI
       - name: Start FastAPI application
         run: |
-          echo "🚀 Building and starting FastAPI..."
           docker compose up -d --build fastapi
-          
-          echo "📊 Waiting for container to start..."
           sleep 10
-          
-          echo "📊 Services status:"
           docker compose ps
-          
-          echo ""
-          echo "📝 FastAPI startup logs:"
           docker compose logs fastapi
 
+      # Vérification de la disponibilité de l'API
+      # L'API doit répondre sur http://localhost:8000 (port hôte mappé au port 80 du conteneur)
       - name: Wait for FastAPI to be ready
         run: |
-          echo "🔍 Waiting for FastAPI to be ready..."
-          
-          # Attendre que le conteneur soit vraiment démarré
+          # Vérification du statut du conteneur
           for i in {1..30}; do
             if docker compose ps fastapi | grep -q "Up"; then
-              echo "✓ FastAPI container is up"
+              echo "FastAPI container is running"
               break
             fi
-            echo "Waiting for FastAPI container... ($i/30)"
+            if [ $i -eq 30 ]; then
+              echo "FastAPI container failed to start"
+              exit 1
+            fi
             sleep 2
           done
           
-          # CORRECTION: Utiliser le bon port (80 dans le conteneur, mappé sur 8000 sur l'hôte)
-          echo "🔍 Checking API endpoint availability..."
+          # Vérification de la disponibilité de l'endpoint /docs (timeout: 180 secondes)
           for i in {1..60}; do
-            # Tester via curl sur le port 8000 de l'hôte
             if curl -sf http://localhost:8000/docs > /dev/null 2>&1; then
-              echo "✓ FastAPI is responding on http://localhost:8000"
+              echo "FastAPI is responding on http://localhost:8000"
               exit 0
             fi
             
-            # Vérifier aussi si le conteneur est toujours en vie
             if ! docker compose ps fastapi | grep -q "Up"; then
-              echo "❌ FastAPI container died"
+              echo "FastAPI container stopped unexpectedly"
               docker compose logs fastapi
               exit 1
             fi
             
-            echo "Waiting for FastAPI to respond... ($i/60)"
             sleep 3
           done
           
-          echo "❌ FastAPI did not become ready in time"
-          echo ""
-          echo "=== Container Status ==="
+          # Si l'API ne répond pas après le timeout, afficher les logs et échouer
+          echo "FastAPI failed to become ready"
           docker compose ps
-          echo ""
-          echo "=== FastAPI Logs ==="
           docker compose logs fastapi
-          echo ""
-          echo "=== MariaDB Logs ==="
           docker compose logs db
           exit 1
 
-      - name: Verify database connection from FastAPI
+      # Test de la connexion à la base de données depuis le conteneur FastAPI
+      - name: Verify database connection
         run: |
-          echo "🔍 Testing database connection from FastAPI container..."
           docker compose exec -T fastapi python -c "
           from api.database import engine
           try:
               with engine.connect() as conn:
-                  print('✓ Database connection successful')
+                  print('Database connection successful')
           except Exception as e:
-              print(f'❌ Database connection failed: {e}')
+              print(f'Database connection failed: {e}')
               exit(1)
           " || {
-            echo "❌ FastAPI cannot connect to database"
             docker compose logs fastapi
             docker compose logs db
             exit 1
           }
 
-      - name: Install test dependencies in container
+      # Installation des dépendances de test dans le conteneur
+      - name: Install test dependencies
         run: |
-          echo "📦 Installing pytest and coverage tools..."
           docker compose exec -T fastapi pip install pytest pytest-cov
 
-      - name: Run pytest in Docker container
+      # Exécution des tests unitaires avec couverture de code
+      - name: Run pytest
         run: |
-          echo "🧪 Running tests in Docker container..."
           mkdir -p reports
           docker compose exec -T fastapi pytest -v \
             --junitxml=/code/reports/pytest-junit.xml \
@@ -184,20 +172,16 @@ jobs:
             --cov-report=term \
             --cov-report=html:/code/reports/htmlcov
 
-      - name: Copy test reports from container
+      # Copie des rapports de test depuis le conteneur vers l'hôte
+      - name: Copy test reports
         if: always()
         run: |
-          echo "📋 Copying reports from container..."
           container_id=$(docker compose ps -q fastapi)
           if [ -n "$container_id" ]; then
-            docker cp ${container_id}:/code/reports ./reports 2>/dev/null || {
-              echo "⚠️ Could not copy reports, checking if they exist..."
-              docker compose exec -T fastapi ls -la /code/reports || true
-            }
-          else
-            echo "⚠️ FastAPI container not found"
+            docker cp ${container_id}:/code/reports ./reports 2>/dev/null || true
           fi
 
+      # Upload des rapports de test en tant qu'artefacts GitHub
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -216,6 +200,7 @@ jobs:
           retention-days: 30
           if-no-files-found: warn
 
+      # Commentaire automatique de la couverture sur les Pull Requests
       - name: Comment PR with coverage
         if: github.event_name == 'pull_request' && hashFiles('reports/coverage.xml') != ''
         uses: orgoro/coverage@v3.1
@@ -224,6 +209,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
 
+      # Affichage des logs en cas d'échec
       - name: Display logs on failure
         if: failure()
         run: |
@@ -236,10 +222,10 @@ jobs:
           echo "=== Container Status ==="
           docker compose ps
 
-      - name: Cleanup after unit tests
+      # Nettoyage des conteneurs et volumes
+      - name: Cleanup
         if: always()
         run: |
-          echo "🧹 Cleaning up unit test containers..."
           docker compose down -v
 
 
@@ -255,6 +241,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      # Configuration avec seeding activé pour les tests de performance
       - name: Create .env file for Docker Compose
         run: |
           cat > .env << EOF
@@ -287,114 +274,96 @@ jobs:
           SEED_NB_ADRESSES=60
           EOF
 
+      # Démarrage de la base de données
       - name: Start database with seeding
         run: |
-          echo "🗄️ Starting MariaDB..."
           docker compose up -d db
           
-          echo "⏳ Waiting for MariaDB to be ready..."
+          # Attente de la disponibilité de MariaDB
           for i in {1..60}; do
             if docker compose exec -T db mysqladmin ping -h localhost -u admin -pAdmin123! --silent 2>/dev/null; then
-              echo "✓ MariaDB is ready after $i attempts"
+              echo "MariaDB ready after $i attempts"
               break
             fi
             if [ $i -eq 60 ]; then
-              echo "❌ MariaDB failed to start"
+              echo "MariaDB startup timeout"
               docker compose logs db
               exit 1
             fi
             sleep 2
           done
           
-          echo "⏳ Waiting for MariaDB to stabilize..."
           sleep 10
 
+      # Démarrage de FastAPI avec données de test
       - name: Start FastAPI with seeding
         run: |
-          echo "🚀 Starting FastAPI with seeding enabled..."
           docker compose up -d --build fastapi
-          
-          echo "⏳ Waiting for FastAPI to start (seeding may take time)..."
           sleep 15
-          
-          echo "📊 Container status:"
           docker compose ps
-          
-          echo ""
-          echo "📝 Recent FastAPI logs:"
           docker compose logs fastapi --tail=50
 
+      # Vérification de la disponibilité de l'API (timeout étendu pour le seeding)
       - name: Wait for API to be ready
         run: |
-          echo "🔍 Checking API health on http://localhost:8000..."
-          
           for i in {1..120}; do
-            # Vérifier si le conteneur est toujours en vie
             if ! docker compose ps fastapi | grep -q "Up"; then
-              echo "❌ FastAPI container has stopped or crashed"
+              echo "FastAPI container stopped"
               docker compose logs fastapi
               exit 1
             fi
             
-            # CORRECTION: Vérifier sur le bon port (8000 sur l'hôte)
             if curl -sf http://localhost:8000/docs > /dev/null 2>&1; then
-              echo "✓ API is ready and responding after $i attempts"
+              echo "API ready after $i attempts"
               exit 0
             fi
             
-            # Logs progressifs pour debug
+            # Affichage périodique des logs pour le suivi
             if [ $((i % 20)) -eq 0 ]; then
-              echo ""
-              echo "Still waiting... Showing recent logs:"
               docker compose logs fastapi --tail=20
-              echo ""
             fi
             
-            echo "Waiting for API... ($i/120)"
             sleep 3
           done
           
-          echo "❌ API did not become ready in time"
-          echo ""
-          echo "=== Final Container Status ==="
+          echo "API failed to become ready"
           docker compose ps
-          echo ""
-          echo "=== Final FastAPI Logs ==="
           docker compose logs fastapi --tail=200
-          echo ""
-          echo "=== MariaDB Logs ==="
           docker compose logs db --tail=100
           exit 1
 
+      # Test de base des endpoints de l'API
       - name: Test API endpoints
         run: |
-          echo "🧪 Testing API endpoints..."
-          
           echo "Testing /docs endpoint:"
           curl -v http://localhost:8000/docs 2>&1 | head -30
           
-          echo ""
-          echo "Testing /api/v1 endpoint (if exists):"
+          echo "Testing /api/v1 endpoint:"
           curl -v http://localhost:8000/api/v1/ 2>&1 | head -20 || echo "Endpoint may not exist"
 
+      # Préparation des répertoires pour les résultats
       - name: Prepare performance test directories
         run: |
           mkdir -p performance/results reports
           chmod -R 777 performance/results reports
 
+      # Exécution des tests de performance avec k6
+      # - Baseline (10 VUs): doit passer, bloque le build en cas d'échec
+      # - Load test (50 VUs): informatif, ne bloque pas le build
+      # - Stress test (100 VUs): informatif, ne bloque pas le build
       - name: Run k6 performance tests
         run: |
-          # Fonction pour lancer k6 avec gestion des erreurs
           run_k6_test() {
             local vus=$1
             local duration=$2
             local label=$3
-            local enforce_thresholds=$4  # true = fait échouer le job, false = warning seulement
+            local enforce_thresholds=$4
             
             echo ""
-            echo "📊 Running k6 with ${vus} VUs (${label})..."
+            echo "=========================================="
+            echo "Running k6 with ${vus} VUs (${label})"
+            echo "=========================================="
             
-            # Lancer k6 et capturer le code de sortie
             docker run --rm --network host \
               -v "${PWD}:/work" -w /work \
               grafana/k6 run performance/test.js \
@@ -409,91 +378,80 @@ jobs:
                 
                 local exit_code=$?
                 
-                # Exit code 99 = thresholds dépassés
+                # Exit code 99 = dépassement de seuils de performance
                 # Exit code 0 = succès
-                # Autres codes = vraies erreurs (connexion, timeout, etc.)
+                # Autres codes = erreurs réelles (connexion, timeout, etc.)
                 if [ $exit_code -eq 99 ]; then
                   if [ "$enforce_thresholds" = "true" ]; then
-                    echo "❌ ${vus} VUs: Performance thresholds exceeded (BLOCKING)"
+                    echo "Performance thresholds exceeded (BLOCKING)"
                     return 99
                   else
-                    echo "⚠️  ${vus} VUs: Performance thresholds exceeded (WARNING - non-blocking)"
+                    echo "Performance thresholds exceeded (WARNING - non-blocking)"
                     return 0
                   fi
                 else
-                  echo "❌ ${vus} VUs: Test failed with exit code $exit_code"
+                  echo "Test failed with exit code $exit_code"
                   return $exit_code
                 fi
               }
             
-            echo "✅ ${vus} VUs: All checks passed"
+            echo "Test completed successfully"
           }
           
-          # Baseline test (10 VUs) - MUST PASS
-          echo "=========================================="
-          echo "BASELINE TEST (10 VUs) - Must pass"
-          echo "=========================================="
+          # Test baseline (10 VUs) - bloque en cas d'échec
           run_k6_test 10 30s "baseline" true
           
-          # Standard load test (50 VUs) - INFORMATIONAL ONLY
-          echo ""
-          echo "=========================================="
-          echo "LOAD TEST (50 VUs) - Informational only"
-          echo "=========================================="
+          # Test de charge standard (50 VUs) - informatif uniquement
           run_k6_test 50 30s "standard load" false || true
           
-          # Stress test (100 VUs) - INFORMATIONAL ONLY
-          echo ""
-          echo "=========================================="
-          echo "STRESS TEST (100 VUs) - Informational only"
-          echo "=========================================="
+          # Test de stress (100 VUs) - informatif uniquement
           run_k6_test 100 30s "stress test" false || true
 
-      - name: Generate KPI report
+      # Configuration de Python pour la génération de rapports
+      - name: Setup Python for report generation
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install report dependencies and generate
+      # Installation des dépendances et génération du rapport de performance
+      - name: Generate performance report
         run: |
           pip install --upgrade pip
           pip install pandas tabulate 2>/dev/null || true
           
-          echo "📊 Generating performance report..."
-          
-          # Fonction pour créer un rapport de secours
+          # Fonction pour créer un rapport par défaut si le parser n'existe pas
           create_fallback_report() {
             cat > reports/REPORT.md << 'EOF'
-          # 📊 Performance Test Results
+          # Performance Test Results
           
           Performance tests completed successfully.
           
           ## Test Scenarios Executed
-          - ✅ **10 VUs** - Baseline performance
-          - ✅ **50 VUs** - Standard load
-          - ⚠️ **100 VUs** - Stress test (may have warnings)
+          - Baseline (10 VUs)
+          - Load test (50 VUs)
+          - Stress test (100 VUs)
           
-          ## 📦 Detailed Results
-          Detailed JSON results are available in the artifacts for further analysis.
+          ## Detailed Results
+          Detailed JSON results are available in the artifacts.
           Download the `perf-reports` artifact to view complete metrics.
           
-          ## 🎯 Next Steps
+          ## Next Steps
           1. Review detailed k6 JSON files in artifacts
           2. Analyze response times and throughput
           3. Compare against your SLA requirements
-          4. Investigate any failures in the 100 VU test
           EOF
           }
           
+          # Utilisation du parser personnalisé si disponible
           if [ -f "performance/ci/parse_k6.py" ]; then
             python performance/ci/parse_k6.py \
               --input performance/results \
               --output reports || create_fallback_report
           else
-            echo "ℹ️ parse_k6.py not found, creating basic report"
             create_fallback_report
           fi
 
+      # Affichage du rapport généré
       - name: Display generated report
         if: always()
         run: |
@@ -503,6 +461,7 @@ jobs:
             echo "==================================="
           fi
 
+      # Commentaire automatique avec les résultats de performance sur les Pull Requests
       - name: Comment PR with performance results
         if: github.event_name == 'pull_request' && hashFiles('reports/REPORT.md') != ''
         uses: marocchino/sticky-pull-request-comment@v2
@@ -511,6 +470,7 @@ jobs:
           header: performance-kpi
         continue-on-error: true
 
+      # Upload des artefacts de performance
       - name: Upload performance artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -521,6 +481,7 @@ jobs:
             reports/
           retention-days: 30
 
+      # Affichage des logs en cas d'échec
       - name: Display logs on failure
         if: failure()
         run: |
@@ -533,9 +494,9 @@ jobs:
           echo "=== Container Status ==="
           docker compose ps
 
+      # Nettoyage des conteneurs et volumes
       - name: Cleanup
         if: always()
         run: |
-          echo "🧹 Cleaning up..."
           docker compose down -v
           docker system prune -f || true
