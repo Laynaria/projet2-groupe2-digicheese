@@ -98,8 +98,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: quality-reports
-          path: |
-            radon.txt
+          path: radon.txt
 
   performance:
     runs-on: ubuntu-latest
@@ -109,23 +108,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install k6
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y k6
-
       - name: Start API
         run: |
           uvicorn api.main:app --host 127.0.0.1 --port 8000 &
           sleep 5
 
-      - name: Run k6 performance test
+      - name: Run k6 performance test (Docker)
         env:
           BASE_URL: http://127.0.0.1:8000
           EMAIL: admin@digicheese.com
           PASSWORD: Admin123!
         run: |
-          k6 run performance/test.js --out json=performance/results/k6_ci.json
+          docker run --rm \
+            -v ${{ github.workspace }}:/work \
+            -w /work \
+            -e BASE_URL=$BASE_URL \
+            -e EMAIL=$EMAIL \
+            -e PASSWORD=$PASSWORD \
+            grafana/k6 run performance/test.js \
+            --out json=performance/results/k6_ci.json
 
       - name: Upload performance report
         uses: actions/upload-artifact@v4
