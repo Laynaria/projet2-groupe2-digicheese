@@ -2,9 +2,14 @@ import http from "k6/http";
 import { sleep, check } from "k6";
 
 export const options = {
-  vus: 10,        // surchargé par --vus
-  duration: "30s" // surchargé par --duration
+  vus: 10,
+  duration: "30s",
+  thresholds: {
+    http_req_failed: ["rate<0.01"],        // < 1 % d’erreurs
+    http_req_duration: ["p(95)<5000"],     // 95 % < 5 s
+  },
 };
+
 
 // Variables d’environnement (k6)
 const BASE_URL = __ENV.BASE_URL;
