@@ -1,0 +1,79 @@
+name: Digicheese_QualityPipeline
+
+"on":
+  push:
+
+jobs:
+  quality-and-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:10.6
+        env:
+          MYSQL_ROOT_PASSWORD: securepassword
+          MYSQL_DATABASE: digicheese
+          MYSQL_USER: admin
+          MYSQL_PASSWORD: Admin123!
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uadmin -pAdmin123!"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      DB_USER: admin
+      DB_PASSWORD: Admin123!
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_NAME: digicheese
+
+      SEED_DB: "false"
+      CREATE_TABLES: "true"
+
+      SECRET_KEY: jV3YBUTM14RUgi79Ll86
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Wait for DB
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mariadb-client
+          for i in {1..30}; do
+            mysql -h 127.0.0.1 -uadmin -pAdmin123! -e "SELECT 1" && break
+            sleep 2
+          done
+
+      - name: Lint (flake8)
+        run: |
+          flake8 api/
+
+      - name: Lint (pylint)
+        run: |
+          pylint api/
+
+      - name: Technical debt (radon)
+        run: |
+          radon cc api -s -a --total-average
+          radon cc api -s -n C
+          radon mi api -s
+
+      - name: Unit tests (pytest)
+        run: |
+          pytest -q
