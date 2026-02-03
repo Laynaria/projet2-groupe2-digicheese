@@ -110,23 +110,28 @@ jobs:
 
       - name: Start API
         run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
           uvicorn api.main:app --host 127.0.0.1 --port 8000 &
           sleep 5
 
-      - name: Run k6 performance test (Docker)
+      - name: Run k6 performance test (Docker - Option B)
         env:
           BASE_URL: http://127.0.0.1:8000
           EMAIL: admin@digicheese.com
           PASSWORD: Admin123!
         run: |
+          mkdir -p /tmp/k6-results
           docker run --rm \
-            -v ${{ github.workspace }}:/work \
-            -w /work \
-            -e BASE_URL=$BASE_URL \
-            -e EMAIL=$EMAIL \
-            -e PASSWORD=$PASSWORD \
-            grafana/k6 run performance/test.js \
-            --out json=performance/results/k6_ci.json
+            -v /tmp/k6-results:/results \
+            -e BASE_URL="$BASE_URL" \
+            -e EMAIL="$EMAIL" \
+            -e PASSWORD="$PASSWORD" \
+            grafana/k6 run - < performance/test.js \
+            --out json=/results/k6_ci.json
+
+          mkdir -p performance/results
+          cp /tmp/k6-results/k6_ci.json performance/results/k6_ci.json
 
       - name: Upload performance report
         uses: actions/upload-artifact@v4
