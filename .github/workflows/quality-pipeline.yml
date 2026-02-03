@@ -1,6 +1,6 @@
 name: Digicheese_QualityPipeline
 
-"on":
+on:
   push:
 
 jobs:
@@ -29,10 +29,8 @@ jobs:
       DB_HOST: 127.0.0.1
       DB_PORT: 3306
       DB_NAME: digicheese
-
       SEED_DB: "false"
       CREATE_TABLES: "true"
-
       SECRET_KEY: jV3YBUTM14RUgi79Ll86
       ALGORITHM: HS256
       ACCESS_TOKEN_EXPIRE_MINUTES: 30
@@ -83,11 +81,11 @@ jobs:
 
       - name: Run flake8 (non-blocking)
         run: |
-          flake8 api/ --statistics --count || true
+          flake8 api/ --statistics --count > flake8.txt || true
 
       - name: Run pylint (non-blocking)
         run: |
-          pylint api/ || true
+          pylint api/ > pylint.txt || true
 
       - name: Run radon (non-blocking)
         run: |
@@ -98,7 +96,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: quality-reports
-          path: radon.txt
+          path: |
+            radon.txt
+            flake8.txt
+            pylint.txt
 
   performance:
     runs-on: ubuntu-latest
