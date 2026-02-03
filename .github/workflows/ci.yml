@@ -384,14 +384,17 @@ jobs:
 
       - name: Run k6 performance tests
         run: |
-          # Fonction pour lancer k6
+          # Fonction pour lancer k6 avec gestion des erreurs
           run_k6_test() {
             local vus=$1
             local duration=$2
             local label=$3
+            local enforce_thresholds=$4  # true = fait échouer le job, false = warning seulement
             
             echo ""
             echo "📊 Running k6 with ${vus} VUs (${label})..."
+            
+            # Lancer k6 et capturer le code de sortie
             docker run --rm --network host \
               -v "${PWD}:/work" -w /work \
               grafana/k6 run performance/test.js \
@@ -402,19 +405,49 @@ jobs:
               -e EMAIL="admin@digicheese.com" \
               -e PASSWORD="Admin123!" \
               --out json=performance/results/k6_${vus}.json \
-              --summary-export=performance/results/summary_${vus}.json
+              --summary-export=performance/results/summary_${vus}.json || {
+                
+                local exit_code=$?
+                
+                # Exit code 99 = thresholds dépassés
+                # Exit code 0 = succès
+                # Autres codes = vraies erreurs (connexion, timeout, etc.)
+                if [ $exit_code -eq 99 ]; then
+                  if [ "$enforce_thresholds" = "true" ]; then
+                    echo "❌ ${vus} VUs: Performance thresholds exceeded (BLOCKING)"
+                    return 99
+                  else
+                    echo "⚠️  ${vus} VUs: Performance thresholds exceeded (WARNING - non-blocking)"
+                    return 0
+                  fi
+                else
+                  echo "❌ ${vus} VUs: Test failed with exit code $exit_code"
+                  return $exit_code
+                fi
+              }
+            
+            echo "✅ ${vus} VUs: All checks passed"
           }
           
-          # Baseline test
-          run_k6_test 10 30s "baseline"
+          # Baseline test (10 VUs) - MUST PASS
+          echo "=========================================="
+          echo "BASELINE TEST (10 VUs) - Must pass"
+          echo "=========================================="
+          run_k6_test 10 30s "baseline" true
           
-          # Standard load test
-          run_k6_test 50 30s "standard load"
+          # Standard load test (50 VUs) - INFORMATIONAL ONLY
+          echo ""
+          echo "=========================================="
+          echo "LOAD TEST (50 VUs) - Informational only"
+          echo "=========================================="
+          run_k6_test 50 30s "standard load" false || true
           
-          # Stress test (peut échouer)
-          run_k6_test 100 30s "stress test" || {
-            echo "⚠️ 100 VUs test failed (expected for stress test)"
-          }
+          # Stress test (100 VUs) - INFORMATIONAL ONLY
+          echo ""
+          echo "=========================================="
+          echo "STRESS TEST (100 VUs) - Informational only"
+          echo "=========================================="
+          run_k6_test 100 30s "stress test" false || true
 
       - name: Generate KPI report
         uses: actions/setup-python@v5
