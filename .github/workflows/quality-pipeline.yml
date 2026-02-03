@@ -1,6 +1,6 @@
 name: Digicheese_QualityPipeline
-#
-"on":
+
+on:
   push:
 
 jobs:
@@ -56,6 +56,7 @@ jobs:
           sudo apt-get install -y mariadb-client
           for i in {1..30}; do
             mysql -h 127.0.0.1 -uadmin -pAdmin123! -e "SELECT 1" && break
+            echo "DB not ready yet... ($i/30)"
             sleep 2
           done
 
@@ -105,36 +106,23 @@ jobs:
     needs: tests
     continue-on-error: true
 
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Start API
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          uvicorn api.main:app --host 127.0.0.1 --port 8000 &
-          sleep 5
-
-      - name: Run k6 performance test (Docker - Option B)
+    services:
+      mariadb:
+        image: mariadb:10.6
         env:
-          BASE_URL: http://127.0.0.1:8000
-          EMAIL: admin@digicheese.com
-          PASSWORD: Admin123!
-        run: |
-          mkdir -p /tmp/k6-results
-          docker run --rm \
-            -v /tmp/k6-results:/results \
-            -e BASE_URL="$BASE_URL" \
-            -e EMAIL="$EMAIL" \
-            -e PASSWORD="$PASSWORD" \
-            grafana/k6 run - < performance/test.js \
-            --out json=/results/k6_ci.json
+          MYSQL_ROOT_PASSWORD: securepassword
+          MYSQL_DATABASE: digicheese
+          MYSQL_USER: admin
+          MYSQL_PASSWORD: Admin123!
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uadmin -pAdmin123!"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
 
-          mkdir -p performance/results
-          cp /tmp/k6-results/k6_ci.json performance/results/k6_ci.json
-
-      - name: Upload performance report
-        uses: actions/upload-artifact@v4
-        with:
-          name: performance-report
-          path: performance/results/k6_ci.json
+    env:
+      # DB pour l'API lancée dans ce job
+      DB_USER: admin
+      DB_PASSWORD: Admin123!
