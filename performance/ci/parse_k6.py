@@ -1,226 +1,235 @@
 #!/usr/bin/env python3
+"""
+Script pour parser les résultats JSON de k6 et générer un rapport markdown.
+Usage: python parse_k6.py --input performance/results --output reports
+"""
+
 import argparse
 import json
 import os
-from collections import defaultdict
-from statistics import mean
+from pathlib import Path
+from typing import Dict, List, Any
 
-# On suppose que le script k6 met tags.endpoint = "/login" "/users" "/orders"
-ENDPOINTS = ["/login", "/users", "/orders"]
 
-def load_events(path):
-    with open(path, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            yield json.loads(line)
+def parse_k6_json(filepath: Path) -> Dict[str, Any]:
+    """Parse un fichier JSON k6 et extrait les métriques importantes."""
+    try:
+        with open(filepath, 'r') as f:
+            lines = f.readlines()
 
-def compute_kpis(json_path):
-    durations = {ep: [] for ep in ENDPOINTS}
-    errors = {ep: 0 for ep in ENDPOINTS}
-    counts = {ep: 0 for ep in ENDPOINTS}
-    first_ts = None
-    last_ts = None
+        # Dernière ligne contient le summary
+        if not lines:
+            return {}
 
-    for evt in load_events(json_path):
-        # k6 JSON output = stream d'événements
-        # Les req HTTP apparaissent dans "metric": "http_req_duration" ou "http_reqs" etc.
-        # On se base sur "http_req_duration" pour mesurer les requêtes réellement effectuées.
-        if evt.get("type") != "Point":
-            continue
-
-        metric = evt.get("metric")
-        data = evt.get("data", {})
-        tags = data.get("tags", {}) or {}
-        endpoint = tags.get("endpoint")
-
-        # timestamps (pour throughput)
-        ts = data.get("time")
-        if ts:
-            first_ts = ts if first_ts is None else min(first_ts, ts)
-            last_ts = ts if last_ts is None else max(last_ts, ts)
-
-        if metric == "http_req_duration" and endpoint in durations:
-            val_ms = data.get("value")
-            if isinstance(val_ms, (int, float)):
-                durations[endpoint].append(val_ms)
-                counts[endpoint] += 1
-
-                # erreur si status >= 400
-                status = tags.get("status")
-                try:
-                    status_i = int(status) if status is not None else 200
-                except Exception:
-                    status_i = 200
-                if status_i >= 400:
-                    errors[endpoint] += 1
-
-    # Durée approximative observée (si ts present)
-    duration_s = 0.0
-    if first_ts is not None and last_ts is not None:
-        # ts est une string ISO; on ne parse pas en datetime pour rester robuste,
-        # et on utilise plutôt les compteurs si besoin.
-        # Ici, on laisse 30s par défaut si impossible à déduire.
-        duration_s = 30.0
-    else:
-        duration_s = 30.0
-
-    kpis = {}
-    for ep in ENDPOINTS:
-        n = counts[ep]
-        if n == 0:
-            kpis[ep] = None
-            continue
-
-        avg_ms = mean(durations[ep])
-        max_ms = max(durations[ep])
-        err_pct = (errors[ep] / n) * 100.0
-        thr = n / duration_s
-
-        kpis[ep] = {
-            "avg_ms": avg_ms,
-            "max_ms": max_ms,
-            "err_pct": err_pct,
-            "throughput": thr,
-            "count": n,
+        # k6 écrit plusieurs lignes JSON, on cherche les métriques
+        metrics = {
+            'http_reqs': {},
+            'http_req_duration': {},
+            'http_req_failed': {},
+            'vus': {},
+            'iterations': {}
         }
 
-    return kpis
+        for line in lines:
+            try:
+                data = json.loads(line)
+                metric_name = data.get('metric')
 
-def classify(kpis):
-    # Diagnostic simple et “IA-like”
-    notes = []
-    bottlenecks = []
+                if metric_name in metrics:
+                    if 'data' in data:
+                        metrics[metric_name] = data['data']
+            except json.JSONDecodeError:
+                continue
 
-    login = kpis.get("/login")
-    if login is None:
-        bottlenecks.append("Le scénario n'a pas atteint /login (aucune requête mesurée).")
+        return metrics
+    except Exception as e:
+        print(f"⚠️  Erreur lors du parsing de {filepath}: {e}")
+        return {}
+
+
+def parse_k6_summary(filepath: Path) -> Dict[str, Any]:
+    """Parse le fichier summary JSON exporté par k6."""
+    try:
+        with open(filepath, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"⚠️  Erreur lors du parsing du summary {filepath}: {e}")
+        return {}
+
+
+def format_duration(ms: float) -> str:
+    """Formate une durée en millisecondes."""
+    if ms < 1:
+        return f"{ms:.2f}ms"
+    elif ms < 1000:
+        return f"{ms:.0f}ms"
     else:
-        if login["err_pct"] >= 2:
-            bottlenecks.append(f"/login instable : {login['err_pct']:.2f}% d'erreurs.")
-        if login["avg_ms"] >= 5000:
-            bottlenecks.append(f"/login très lent : {login['avg_ms']:.0f}ms en moyenne.")
-        if login["max_ms"] >= 10000:
-            bottlenecks.append(f"/login pics élevés : max {login['max_ms']:.0f}ms.")
+        return f"{ms / 1000:.2f}s"
 
-    # Suggestions générales
-    notes.append("Le scénario effectue un login à chaque itération : c'est un stress-test d'authentification (pire cas).")
-    notes.append("Pour un scénario métier réaliste, utiliser setup() dans k6 pour authentifier une fois par VU.")
 
-    return bottlenecks, notes
+def format_rate(rate: float) -> str:
+    """Formate un taux."""
+    return f"{rate:.2f}/s"
 
-def thresholds_section():
-    # Seuils cibles / critiques (TP)
-    return {
-        "targets": {
-            "/login": {"p95_ms": 2000, "err_pct": 1},
-            "/users": {"p95_ms": 1000, "err_pct": 1},
-            "/orders": {"p95_ms": 800, "err_pct": 1},
-        },
-        "critical": {
-            "/login": {"avg_ms": 5000, "err_pct": 2},
-            "/users": {"max_ms": 5000, "err_pct": 2},
-            "/orders": {"max_ms": 3000, "err_pct": 2},
-        },
-    }
 
-def write_kpi_md(out_path, run_name, kpis):
-    lines = []
-    lines.append(f"# KPI - {run_name}\n")
-    lines.append("| Endpoint | Latence moyenne (ms) | Temps max (ms) | Taux d’erreur (%) | Throughput (req/sec) |")
-    lines.append("|---|---:|---:|---:|---:|")
-    for ep in ENDPOINTS:
-        data = kpis.get(ep)
-        if data is None:
-            lines.append(f"| {ep} | N/A | N/A | N/A | N/A |")
-        else:
-            lines.append(
-                f"| {ep} | {data['avg_ms']:.2f} | {data['max_ms']:.2f} | {data['err_pct']:.2f} | {data['throughput']:.2f} |"
-            )
-    lines.append("")
-    with open(out_path, "w", encoding="utf-8") as f:
-        f.write("\n".join(lines))
+def generate_report(results_dir: Path, output_dir: Path) -> None:
+    """Génère un rapport markdown à partir des résultats k6."""
 
-def write_report_md(out_path, all_runs):
-    thr = thresholds_section()
-    lines = []
-    lines.append("# Rapport d’analyse – TP 3.3 (CI/CD)\n")
-    lines.append("Ce rapport est généré automatiquement en CI à partir des exports JSON de k6.\n")
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Synthèse
-    lines.append("## Synthèse\n")
-    for run_name, kpis in all_runs.items():
-        bottlenecks, notes = classify(kpis)
-        lines.append(f"### {run_name}\n")
-        if bottlenecks:
-            lines.append("**Goulets d’étranglement détectés :**")
-            for b in bottlenecks:
-                lines.append(f"- {b}")
-        else:
-            lines.append("Aucun goulet critique détecté sur les règles simples.")
-        lines.append("")
-        lines.append("**Notes de contexte :**")
-        for n in notes:
-            lines.append(f"- {n}")
-        lines.append("")
+    # Chercher tous les fichiers summary
+    summaries = {}
+    for file in results_dir.glob("summary_*.json"):
+        vus = file.stem.replace("summary_", "")
+        summary = parse_k6_summary(file)
+        if summary:
+            summaries[vus] = summary
 
-    # Seuils
-    lines.append("## Seuils recommandés\n")
-    lines.append("### Seuils cibles\n")
-    for ep, v in thr["targets"].items():
-        lines.append(f"- **{ep}** : p95 < {v['p95_ms']}ms ; erreurs < {v['err_pct']}%")
-    lines.append("\n### Seuils critiques\n")
-    for ep, v in thr["critical"].items():
-        if "avg_ms" in v:
-            lines.append(f"- **{ep}** : moyenne ≥ {v['avg_ms']}ms ou erreurs ≥ {v['err_pct']}%")
-        else:
-            lines.append(f"- **{ep}** : max ≥ {v['max_ms']}ms ou erreurs ≥ {v['err_pct']}%")
+    # Si pas de summary, essayer de parser les fichiers JSON bruts
+    if not summaries:
+        for file in results_dir.glob("k6_*.json"):
+            vus = file.stem.replace("k6_", "")
+            metrics = parse_k6_json(file)
+            if metrics:
+                summaries[vus] = {"metrics": metrics}
 
-    # Recos
-    lines.append("\n## Recommandations priorisées\n")
-    lines.append("### P0 – Stabiliser /login\n")
-    lines.append("- Vérifier la saturation CPU (hash mot de passe) et ajuster le cost bcrypt/argon2 si nécessaire.")
-    lines.append("- Optimiser l’accès DB au login : index sur email, chargement rôles en eager-loading, réduire les requêtes.")
-    lines.append("- Ajuster le pool DB (SQLAlchemy) et vérifier les limites de connexions côté SGBD.")
-    lines.append("\n### P1 – Réduire la variabilité /users\n")
-    lines.append("- Pagination stricte et réduction du payload en liste.")
-    lines.append("- Vérifier N+1 et optimiser les relations/joins.")
-    lines.append("\n### P2 – Rendre la CI plus représentative\n")
-    lines.append("- Ajouter un scénario k6 “métier” : login une fois par VU (setup), puis appels /users et /orders.")
-    lines.append("- Conserver un scénario “stress-login” pour trouver le point de rupture.\n")
+    # Générer le rapport
+    report_path = output_dir / "REPORT.md"
 
-    with open(out_path, "w", encoding="utf-8") as f:
-        f.write("\n".join(lines))
+    with open(report_path, 'w') as f:
+        f.write("# 📊 Performance Test Results (k6)\n\n")
+
+        if not summaries:
+            f.write("⚠️  No results found. Check that k6 tests ran successfully.\n")
+            return
+
+        f.write(f"**Generated:** {Path.cwd()}\n\n")
+        f.write("## 📈 Test Scenarios\n\n")
+
+        # Tableau comparatif
+        f.write("| Scenario | Requests | Success Rate | Avg Duration | P95 Duration | Max Duration |\n")
+        f.write("|----------|----------|--------------|--------------|--------------|-------------|\n")
+
+        for vus in sorted(summaries.keys(), key=lambda x: int(x)):
+            summary = summaries[vus]
+            metrics = summary.get('metrics', {})
+
+            # Extraire les métriques
+            http_reqs = metrics.get('http_reqs', {})
+            http_req_duration = metrics.get('http_req_duration', {})
+            http_req_failed = metrics.get('http_req_failed', {})
+
+            # Calculer les valeurs
+            total_reqs = http_reqs.get('count', 0)
+
+            # Taux de succès
+            failed_count = http_req_failed.get('count', 0)
+            failed_rate = http_req_failed.get('rate', 0) if http_req_failed else 0
+            success_rate = (1 - failed_rate) * 100 if failed_rate else 100
+
+            # Durées
+            avg_duration = http_req_duration.get('avg', 0)
+            p95_duration = http_req_duration.get('p(95)', 0)
+            max_duration = http_req_duration.get('max', 0)
+
+            # Écrire la ligne
+            f.write(f"| **{vus} VUs** | {total_reqs:,} | {success_rate:.1f}% | "
+                    f"{format_duration(avg_duration)} | {format_duration(p95_duration)} | "
+                    f"{format_duration(max_duration)} |\n")
+
+        f.write("\n## 📋 Detailed Results\n\n")
+
+        # Détails par scénario
+        for vus in sorted(summaries.keys(), key=lambda x: int(x)):
+            summary = summaries[vus]
+            metrics = summary.get('metrics', {})
+
+            f.write(f"### {vus} VUs\n\n")
+
+            # HTTP Requests
+            http_reqs = metrics.get('http_reqs', {})
+            if http_reqs:
+                total = http_reqs.get('count', 0)
+                rate = http_reqs.get('rate', 0)
+                f.write(f"**Total Requests:** {total:,} ({format_rate(rate)})\n\n")
+
+            # Request Duration
+            http_req_duration = metrics.get('http_req_duration', {})
+            if http_req_duration:
+                f.write("**Request Duration:**\n")
+                f.write(f"- Average: {format_duration(http_req_duration.get('avg', 0))}\n")
+                f.write(f"- Median: {format_duration(http_req_duration.get('med', 0))}\n")
+                f.write(f"- P95: {format_duration(http_req_duration.get('p(95)', 0))}\n")
+                f.write(f"- P99: {format_duration(http_req_duration.get('p(99)', 0))}\n")
+                f.write(f"- Max: {format_duration(http_req_duration.get('max', 0))}\n\n")
+
+            # Failures
+            http_req_failed = metrics.get('http_req_failed', {})
+            if http_req_failed:
+                failed_count = http_req_failed.get('count', 0)
+                failed_rate = http_req_failed.get('rate', 0)
+
+                if failed_count > 0:
+                    f.write(f"**⚠️ Failures:** {failed_count} ({failed_rate * 100:.2f}%)\n\n")
+                else:
+                    f.write("**✅ No failures**\n\n")
+
+            # Iterations
+            iterations = metrics.get('iterations', {})
+            if iterations:
+                iter_count = iterations.get('count', 0)
+                iter_rate = iterations.get('rate', 0)
+                f.write(f"**Iterations:** {iter_count:,} ({format_rate(iter_rate)})\n\n")
+
+            f.write("---\n\n")
+
+        f.write("## 🎯 Recommendations\n\n")
+
+        # Analyser les résultats et donner des recommandations
+        all_vus = sorted(summaries.keys(), key=lambda x: int(x))
+        if len(all_vus) > 1:
+            first_vus = summaries[all_vus[0]].get('metrics', {})
+            last_vus = summaries[all_vus[-1]].get('metrics', {})
+
+            first_avg = first_vus.get('http_req_duration', {}).get('avg', 0)
+            last_avg = last_vus.get('http_req_duration', {}).get('avg', 0)
+
+            if last_avg > first_avg * 2:
+                f.write("- ⚠️  **Performance degradation detected** under high load\n")
+                f.write("- Consider optimizing database queries or adding caching\n")
+                f.write("- Review connection pool settings\n\n")
+            else:
+                f.write("- ✅ **Good scalability** - performance remains stable under load\n\n")
+
+        # Vérifier les taux d'erreur
+        for vus, summary in summaries.items():
+            failed = summary.get('metrics', {}).get('http_req_failed', {})
+            if failed.get('count', 0) > 0:
+                f.write(f"- ⚠️  **{vus} VUs**: {failed.get('count', 0)} failures detected - investigate error logs\n")
+
+        f.write("\n## 📦 Artifacts\n\n")
+        f.write("Detailed JSON results are available in the artifacts for further analysis.\n")
+
+    print(f"✅ Report generated: {report_path}")
+
 
 def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--input", required=True, help="Dossier contenant k6_10.json, k6_50.json, k6_100.json")
-    ap.add_argument("--output", required=True, help="Dossier de sortie (reports)")
-    args = ap.parse_args()
+    parser = argparse.ArgumentParser(description='Parse k6 results and generate KPI report')
+    parser.add_argument('--input', required=True, help='Input directory with k6 JSON results')
+    parser.add_argument('--output', required=True, help='Output directory for reports')
 
-    os.makedirs(args.output, exist_ok=True)
+    args = parser.parse_args()
 
-    mapping = {
-        "k6_10.json": "Run 10 VUs",
-        "k6_50.json": "Run 50 VUs",
-        "k6_100.json": "Run 100 VUs",
-    }
+    results_dir = Path(args.input)
+    output_dir = Path(args.output)
 
-    all_runs = {}
-    for fname, run_name in mapping.items():
-        path = os.path.join(args.input, fname)
-        if not os.path.exists(path):
-            continue
-        kpis = compute_kpis(path)
-        all_runs[run_name] = kpis
+    if not results_dir.exists():
+        print(f"❌ Input directory not found: {results_dir}")
+        return 1
 
-        out_kpi = os.path.join(args.output, f"KPI_{fname.replace('.json','')}.md")
-        write_kpi_md(out_kpi, run_name, kpis)
+    generate_report(results_dir, output_dir)
+    return 0
 
-    # KPI global (option)
-    if all_runs:
-        write_report_md(os.path.join(args.output, "REPORT.md"), all_runs)
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    exit(main())
