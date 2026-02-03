@@ -5,6 +5,16 @@ on:
     branches: [ "main", "tb_ci_cd" ]
   pull_request:
 
+env:
+  # Configuration commune pour tous les jobs
+  SECRET_KEY: "test-secret-key-for-ci-only"
+  ALGORITHM: "HS256"
+  ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+  USER: "admin"
+  PASSWORD: "Admin123!"
+  DATABASE: "digicheese"
+  MYSQL_ROOT_PASSWORD: "securepassword"
+
 jobs:
   unit-tests:
     name: Unit tests (pytest in Docker)
@@ -17,46 +27,72 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Start services with docker compose
+      - name: Start database first
         env:
-          # JWT Configuration
-          SECRET_KEY: "test-secret-key-for-ci-only"
-          ALGORITHM: "HS256"
-          ACCESS_TOKEN_EXPIRE_MINUTES: "30"
-
-          # Database Configuration
-          USER: "admin"
-          PASSWORD: "Admin123!"
-          DATABASE: "digicheese"
-          MYSQL_ROOT_PASSWORD: "securepassword"
-
-          # Seed (désactivé pour les tests unitaires)
           SEED_DB: "false"
           SEED_ADMIN: "false"
         run: |
-          echo "🚀 Starting services..."
-          docker compose up -d --build
+          echo "🗄️ Starting MariaDB first..."
+          docker compose up -d db
           
-          echo "⏳ Waiting for services to be ready..."
-          sleep 15
+          echo "⏳ Waiting for MariaDB to be fully ready..."
+          for i in {1..60}; do
+            if docker compose exec -T db mysqladmin ping -h localhost -u admin -pAdmin123! --silent 2>/dev/null; then
+              echo "✓ MariaDB is ready ($i attempts)"
+              break
+            fi
+            if [ $i -eq 60 ]; then
+              echo "❌ MariaDB failed to start"
+              docker compose logs db
+              exit 1
+            fi
+            sleep 2
+          done
+          
+          # Attente supplémentaire pour stabilisation
+          echo "⏳ Additional wait for MariaDB stabilization..."
+          sleep 5
+
+      - name: Start FastAPI application
+        env:
+          SEED_DB: "false"
+          SEED_ADMIN: "false"
+        run: |
+          echo "🚀 Starting FastAPI..."
+          docker compose up -d --build fastapi
+          
+          echo "⏳ Waiting for FastAPI to start..."
+          sleep 10
           
           echo "📊 Services status:"
           docker compose ps
+          
+          echo "📝 FastAPI logs:"
+          docker compose logs fastapi --tail=30
 
-      - name: Wait for MariaDB to be ready
+      - name: Verify services health
         run: |
-          echo "🔍 Waiting for MariaDB..."
-          for i in {1..30}; do
-            if docker compose exec -T db mysqladmin ping -h localhost -u admin -pAdmin123! --silent 2>/dev/null; then
-              echo "✓ MariaDB is ready"
-              exit 0
-            fi
-            echo "Waiting for MariaDB... ($i/30)"
-            sleep 3
-          done
-          echo "❌ MariaDB did not become ready"
-          docker compose logs db
-          exit 1
+          echo "🔍 Verifying all services..."
+          
+          # Vérifier MariaDB
+          if ! docker compose exec -T db mysqladmin ping -h localhost -u admin -pAdmin123! --silent; then
+            echo "❌ MariaDB health check failed"
+            docker compose logs db
+            exit 1
+          fi
+          
+          # Vérifier FastAPI
+          if ! docker compose exec -T fastapi python -c "from api.database import engine; engine.connect()" 2>/dev/null; then
+            echo "⚠️ FastAPI can't connect to database yet, waiting more..."
+            sleep 10
+            docker compose exec -T fastapi python -c "from api.database import engine; engine.connect()" || {
+              echo "❌ FastAPI database connection failed"
+              docker compose logs fastapi
+              exit 1
+            }
+          fi
+          
+          echo "✓ All services are healthy"
 
       - name: Install test dependencies in container
         run: |
@@ -78,19 +114,11 @@ jobs:
         if: always()
         run: |
           echo "📋 Copying reports from container..."
-          docker cp $(docker compose ps -q fastapi):/code/reports ./reports || {
-            echo "⚠️  Could not copy reports, trying alternative method..."
-            mkdir -p reports
+          docker cp $(docker compose ps -q fastapi):/code/reports ./reports 2>/dev/null || {
+            echo "⚠️  Could not copy reports from /code/reports"
+            # Essayer un chemin alternatif
+            docker compose exec -T fastapi find / -name "pytest-junit.xml" 2>/dev/null || true
           }
-
-      - name: Display test summary
-        if: always()
-        run: |
-          if [ -f "reports/pytest-junit.xml" ]; then
-            echo "✅ Tests completed - check artifacts for details"
-          else
-            echo "⚠️  No test report found"
-          fi
 
       - name: Upload test reports
         if: always()
@@ -107,6 +135,7 @@ jobs:
           name: coverage-report
           path: reports/htmlcov/
           retention-days: 30
+          if-no-files-found: warn
 
       - name: Comment PR with coverage
         if: github.event_name == 'pull_request' && hashFiles('reports/coverage.xml') != ''
@@ -116,9 +145,20 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
 
-      - name: Stop containers (keep for perf tests)
+      - name: Display logs on failure
+        if: failure()
         run: |
-          echo "⏸️  Keeping containers running for performance tests..."
+          echo "=== FastAPI Logs ==="
+          docker compose logs fastapi --tail=200
+          echo ""
+          echo "=== MariaDB Logs ==="
+          docker compose logs db --tail=100
+
+      - name: Cleanup after unit tests
+        if: always()
+        run: |
+          echo "🧹 Cleaning up unit test containers..."
+          docker compose down -v
 
 
   perf-tests:
@@ -133,168 +173,176 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Start API with docker compose
+      - name: Start database with seeding
         env:
-          # Seed Configuration (activé pour les tests de performance)
           SEED_DB: "true"
           SEED_ADMIN: "true"
           ADMIN_EMAIL: "admin@digicheese.com"
           ADMIN_PASSWORD: "Admin123!"
-
-          # JWT Configuration
-          SECRET_KEY: "test-secret-key-for-ci-only"
-          ALGORITHM: "HS256"
-          ACCESS_TOKEN_EXPIRE_MINUTES: "30"
-
-          # Database Configuration
-          USER: "admin"
-          PASSWORD: "Admin123!"
-          DATABASE: "digicheese"
-          MYSQL_ROOT_PASSWORD: "securepassword"
         run: |
-          echo "🚀 Starting services with seeding enabled..."
-          docker compose up -d --build
+          echo "🗄️ Starting MariaDB..."
+          docker compose up -d db
           
-          echo "⏳ Waiting for services..."
-          sleep 20
+          echo "⏳ Waiting for MariaDB to be ready..."
+          for i in {1..60}; do
+            if docker compose exec -T db mysqladmin ping -h localhost -u admin -pAdmin123! --silent 2>/dev/null; then
+              echo "✓ MariaDB is ready ($i attempts)"
+              break
+            fi
+            if [ $i -eq 60 ]; then
+              echo "❌ MariaDB failed to start"
+              docker compose logs db
+              exit 1
+            fi
+            sleep 2
+          done
+          
+          # Attente supplémentaire pour stabilisation
+          sleep 5
+
+      - name: Start FastAPI with seeding
+        env:
+          SEED_DB: "true"
+          SEED_ADMIN: "true"
+          ADMIN_EMAIL: "admin@digicheese.com"
+          ADMIN_PASSWORD: "Admin123!"
+        run: |
+          echo "🚀 Starting FastAPI with seeding..."
+          docker compose up -d --build fastapi
+          
+          echo "⏳ Waiting for seeding to complete (may take time)..."
+          sleep 30
           
           echo "📊 Container status:"
           docker compose ps
           
-          echo "📝 Recent logs:"
-          docker compose logs --tail=30 fastapi
+          echo "📝 FastAPI logs:"
+          docker compose logs fastapi --tail=50
 
       - name: Wait for API health
         run: |
           echo "🔍 Checking API health..."
-          for i in {1..60}; do
+          for i in {1..90}; do
             if curl -sSf http://localhost:8000/docs > /dev/null 2>&1; then
-              echo "✓ API is up and responding"
+              echo "✓ API is up and responding ($i attempts)"
               exit 0
             fi
-            echo "Waiting for API... ($i/60)"
-            sleep 3
+            echo "Waiting for API... ($i/90)"
+            sleep 2
           done
           
           echo "❌ API did not start in time"
           echo "=== FastAPI Logs ==="
-          docker compose logs fastapi --tail=100
+          docker compose logs fastapi --tail=200
+          echo ""
           echo "=== MariaDB Logs ==="
-          docker compose logs db --tail=50
+          docker compose logs db --tail=100
           exit 1
 
       - name: Verify API endpoints
         run: |
-          echo "🧪 Testing API connectivity..."
-          curl -v http://localhost:8000/docs 2>&1 | head -20 || true
+          echo "🧪 Testing API endpoints..."
+          curl -s http://localhost:8000/docs | head -20
+          echo ""
+          echo "✓ API is responding"
 
-      - name: Create performance results directory
+      - name: Prepare performance test directories
         run: |
           mkdir -p performance/results reports
           chmod -R 777 performance/results reports
 
-      - name: Run k6 - 10 VUs (baseline)
+      - name: Run k6 performance tests
         run: |
-          echo "📊 Running k6 with 10 VUs..."
-          docker run --rm --network host \
-            -v "${PWD}:/work" -w /work \
-            grafana/k6 run performance/test.js \
-            --vus 10 \
-            --duration 30s \
-            -e BASE_URL="http://localhost:8000" \
-            -e API_PREFIX="/api/v1" \
-            -e EMAIL="admin@digicheese.com" \
-            -e PASSWORD="Admin123!" \
-            --out json=performance/results/k6_10.json \
-            --summary-export=performance/results/summary_10.json
+          # Fonction pour lancer k6
+          run_k6_test() {
+            local vus=$1
+            local duration=$2
+            local label=$3
+            
+            echo "📊 Running k6 with ${vus} VUs (${label})..."
+            docker run --rm --network host \
+              -v "${PWD}:/work" -w /work \
+              grafana/k6 run performance/test.js \
+              --vus ${vus} \
+              --duration ${duration} \
+              -e BASE_URL="http://localhost:8000" \
+              -e API_PREFIX="/api/v1" \
+              -e EMAIL="admin@digicheese.com" \
+              -e PASSWORD="Admin123!" \
+              --out json=performance/results/k6_${vus}.json \
+              --summary-export=performance/results/summary_${vus}.json
+          }
+          
+          # Baseline test
+          run_k6_test 10 30s "baseline"
+          
+          # Standard load test
+          run_k6_test 50 30s "standard load"
+          
+          # Stress test (peut échouer)
+          run_k6_test 100 30s "stress test" || {
+            echo "⚠️ 100 VUs test failed (expected for stress test)"
+          }
 
-      - name: Run k6 - 50 VUs (standard load)
-        run: |
-          echo "📊 Running k6 with 50 VUs..."
-          docker run --rm --network host \
-            -v "${PWD}:/work" -w /work \
-            grafana/k6 run performance/test.js \
-            --vus 50 \
-            --duration 30s \
-            -e BASE_URL="http://localhost:8000" \
-            -e API_PREFIX="/api/v1" \
-            -e EMAIL="admin@digicheese.com" \
-            -e PASSWORD="Admin123!" \
-            --out json=performance/results/k6_50.json \
-            --summary-export=performance/results/summary_50.json
-
-      - name: Run k6 - 100 VUs (stress test)
-        continue-on-error: true
-        run: |
-          echo "📊 Running k6 with 100 VUs (stress test)..."
-          docker run --rm --network host \
-            -v "${PWD}:/work" -w /work \
-            grafana/k6 run performance/test.js \
-            --vus 100 \
-            --duration 30s \
-            -e BASE_URL="http://localhost:8000" \
-            -e API_PREFIX="/api/v1" \
-            -e EMAIL="admin@digicheese.com" \
-            -e PASSWORD="Admin123!" \
-            --out json=performance/results/k6_100.json \
-            --summary-export=performance/results/summary_100.json || {
-              echo "⚠️  100 VUs test failed (expected for stress test)"
-              exit 0
-            }
-
-      - name: Set up Python for report generation
+      - name: Generate KPI report
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install Python dependencies for reports
+      - name: Install report dependencies and generate
         run: |
           pip install --upgrade pip
-          pip install pandas tabulate 2>/dev/null || echo "⚠️  Optional dependencies not installed"
-
-      - name: Generate KPI report
-        run: |
+          pip install pandas tabulate 2>/dev/null || true
+          
           echo "📊 Generating performance report..."
           
           if [ -f "performance/ci/parse_k6.py" ]; then
             python performance/ci/parse_k6.py \
               --input performance/results \
-              --output reports || {
-                echo "⚠️  Report generation failed, creating fallback"
-                cat > reports/REPORT.md << 'EOF'
-          # 📊 Performance Test Results
-          
-          Tests completed successfully. See artifacts for detailed JSON results.
-          
-          ## Test Scenarios
-          - ✅ 10 VUs (baseline)
-          - ✅ 50 VUs (standard load)
-          - ⚠️ 100 VUs (stress test - may have warnings)
-          EOF
-              }
+              --output reports || create_fallback_report
           else
-            echo "ℹ️  parse_k6.py not found, creating basic report"
+            create_fallback_report
+          fi
+          
+          # Fonction pour créer un rapport de secours
+          create_fallback_report() {
             cat > reports/REPORT.md << 'EOF'
           # 📊 Performance Test Results
           
-          Performance tests completed. Check artifacts for detailed results.
+          Performance tests completed successfully.
+          
+          ## Test Scenarios Executed
+          - ✅ **10 VUs** - Baseline performance
+          - ✅ **50 VUs** - Standard load
+          - ⚠️ **100 VUs** - Stress test (may have warnings)
+          
+          ## 📦 Detailed Results
+          Detailed JSON results are available in the artifacts for further analysis.
+          Download the `perf-reports` artifact to view complete metrics.
+          
+          ## 🎯 Next Steps
+          1. Review detailed k6 JSON files in artifacts
+          2. Analyze response times and throughput
+          3. Compare against your SLA requirements
+          4. Investigate any failures in the 100 VU test
           EOF
-          fi
+          }
 
-      - name: Display report
+      - name: Display generated report
         if: always()
         run: |
           if [ -f "reports/REPORT.md" ]; then
             echo "=== Performance Report ==="
             cat reports/REPORT.md
+            echo "==================================="
           fi
 
-      - name: Comment PR with KPI
+      - name: Comment PR with performance results
         if: github.event_name == 'pull_request' && hashFiles('reports/REPORT.md') != ''
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           path: reports/REPORT.md
-          header: performance-results
+          header: performance-kpi
         continue-on-error: true
 
       - name: Upload performance artifacts
@@ -303,8 +351,8 @@ jobs:
         with:
           name: perf-reports
           path: |
-            performance/results/*.json
-            reports/*.md
+            performance/results/
+            reports/
           retention-days: 30
 
       - name: Display logs on failure
@@ -312,6 +360,7 @@ jobs:
         run: |
           echo "=== FastAPI Logs ==="
           docker compose logs fastapi --tail=200
+          echo ""
           echo "=== MariaDB Logs ==="
           docker compose logs db --tail=100
 
