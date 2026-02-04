@@ -169,8 +169,6 @@ jobs:
           done
 
       - name: Run k6 performances test (10 VUs)
-        env:
-          BASE_URL: http://127.0.0.1:8000/
         run: |
           mkdir -p /tmp/k6-results
           chmod 777 /tmp/k6-results
