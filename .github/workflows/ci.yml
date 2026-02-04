@@ -203,8 +203,27 @@ jobs:
           mkdir -p performances/results
           cp /tmp/k6-results/k6_ci.json performances/results/k6_ci.json
 
+      - name: Run k6 performances test (50 VUs)
+        continue-on-error: true
+        run: |
+          mkdir -p /tmp/k6-results
+          chmod 777 /tmp/k6-results
+          docker run --rm \
+            --network host \
+            --user $(id -u):$(id -g) \
+            -v $(pwd)/performances:/scripts \
+            -v /tmp/k6-results:/results \
+            grafana/k6 run /scripts/test.js \
+            --vus 50 --duration 30s \
+            --out json=/results/k6_ci_50.json
+
+          mkdir -p performances/results
+          cp /tmp/k6-results/k6_ci_50.json performances/results/k6_ci_50.json
+
       - name: Upload performances report
         uses: actions/upload-artifact@v4
         with:
           name: performances-report
-          path: performances/results/k6_ci.json
+          path: |
+            performances/results/k6_ci.json
+            performances/results/k6_ci_50.json
