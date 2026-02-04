@@ -1,0 +1,58 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+     execution: local
+        script: ./performances/test.js
+        output: json (performances/results/k6_100.json)
+
+     scenarios: (100.00%) 1 scenario, 100 max VUs, 1m0s max duration (incl. graceful stop):
+              * default: 100 looping VUs for 30s (gracefulStop: 30s)
+
+
+
+  █ THRESHOLDS 
+
+    http_req_duration
+    ✗ 'p(95)<3000' p(95)=32.58s
+    ✗ 'p(99)<5000' p(99)=32.58s
+
+    http_req_failed
+    ✗ 'rate<0.05' rate=95.23%
+
+
+  █ TOTAL RESULTS 
+
+    checks_total.......: 84     1.449965/s
+    checks_succeeded...: 4.76%  4 out of 84
+    checks_failed......: 95.23% 80 out of 84
+
+    ✗ login returns 200
+      ↳  4% — ✓ 2 / ✗ 40
+    ✗ token present
+      ↳  4% — ✓ 2 / ✗ 40
+
+    HTTP
+    http_req_duration..............: avg=29.65s   min=409.55ms med=30.43s   max=32.58s   p(90)=32.58s   p(95)=32.58s  
+      { expected_response:true }...: avg=555.17ms min=409.55ms med=555.17ms max=700.79ms p(90)=671.66ms p(95)=686.23ms
+    http_req_failed................: 95.23% 40 out of 42
+    http_reqs......................: 42     0.724982/s
+
+    EXECUTION
+    iteration_duration.............: avg=33.15s   min=32.44s   med=32.47s   max=34.63s   p(90)=34.62s   p(95)=34.62s  
+    iterations.....................: 40     0.690459/s
+    vus............................: 60     min=60       max=100
+    vus_max........................: 100    min=100      max=100
+
+    NETWORK
+    data_received..................: 7.6 kB 131 B/s
+    data_sent......................: 21 kB  368 B/s
+
+
+
+
+running (0m57.9s), 000/100 VUs, 40 complete and 60 interrupted iterations
+default ✓ [ 100% ] 100 VUs  30s

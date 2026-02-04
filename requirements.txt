@@ -12,3 +12,6 @@ faker
 flake8
 pylint
 radon
+flake8>=6.0.0
+pylint>=3.0.0
+radon>=6.0.0

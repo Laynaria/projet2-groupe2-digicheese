@@ -1,0 +1,191 @@
+name: CI_Pipeline_Digicheese
+
+on:
+  push:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:10.6
+        env:
+          MYSQL_ROOT_PASSWORD: securepassword
+          MYSQL_DATABASE: digicheese
+          MYSQL_USER: admin
+          MYSQL_PASSWORD: Admin123!
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uadmin -pAdmin123!"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      DB_USER: admin
+      DB_PASSWORD: Admin123!
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_NAME: digicheese
+      SEED_DB: "false"
+      CREATE_TABLES: "true"
+      SECRET_KEY: A2f158eEHjP9Df5
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Wait for DB
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mariadb-client
+          for i in {1..30}; do
+            mysql -h 127.0.0.1 -uadmin -pAdmin123! -e "SELECT 1" && break
+            sleep 2
+          done
+
+      - name: Run unit tests (blocking)
+        run: |
+          pytest -q
+
+  quality:
+    runs-on: ubuntu-latest
+    needs: tests
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run flake8 (non-blocking)
+        run: |
+          flake8 api/ --statistics --count > flake8.txt || true
+
+      - name: Run pylint (non-blocking)
+        run: |
+          pylint api/ > pylint.txt || true
+
+      - name: Run radon (non-blocking)
+        run: |
+          radon cc api -s -a > radon.txt || true
+          radon mi api -s >> radon.txt || true
+
+      - name: Upload quality reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-reports
+          path: |
+            radon.txt
+            flake8.txt
+            pylint.txt
+
+  performances:
+    runs-on: ubuntu-latest
+    needs: tests
+    continue-on-error: true
+
+    services:
+      mariadb:
+        image: mariadb:10.6
+        env:
+          MYSQL_ROOT_PASSWORD: securepassword
+          MYSQL_DATABASE: digicheese
+          MYSQL_USER: admin
+          MYSQL_PASSWORD: Admin123!
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uadmin -pAdmin123!"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      DB_USER: admin
+      DB_PASSWORD: Admin123!
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_NAME: digicheese
+      SEED_DB: "false"
+      CREATE_TABLES: "true"
+      SECRET_KEY: A2f158eEHjP9Df5
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Wait for DB
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mariadb-client
+          for i in {1..30}; do
+            mysql -h 127.0.0.1 -uadmin -pAdmin123! -e "SELECT 1" && break
+            sleep 2
+          done
+
+      - name: Start API
+        run: |
+          uvicorn api.main:app --host 127.0.0.1 --port 8000 &
+          sleep 10
+
+      - name: Wait for API to be ready
+        run: |
+          for i in {1..30}; do
+            curl -f http://127.0.0.1:8000/ && break
+            sleep 2
+          done
+
+      - name: Run k6 performances test (10 VUs)
+        run: |
+          mkdir -p /tmp/k6-results
+          chmod 777 /tmp/k6-results
+          docker run --rm \
+            --network host \
+            --user $(id -u):$(id -g) \
+            -v $(pwd)/performances:/scripts \
+            -v /tmp/k6-results:/results \
+            grafana/k6 run /scripts/test.js \
+            --vus 10 --duration 30s \
+            --out json=/results/k6_ci.json
+
+          mkdir -p performances/results
+          cp /tmp/k6-results/k6_ci.json performances/results/k6_ci.json
+
+      - name: Upload performances report
+        uses: actions/upload-artifact@v4
+        with:
+          name: performances-report
+          path: performances/results/k6_ci.json
