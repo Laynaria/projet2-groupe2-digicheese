@@ -29,7 +29,7 @@ jobs:
       DB_HOST: 127.0.0.1
       DB_PORT: 3306
       DB_NAME: digicheese
-      SEED_DB: "true"
+      SEED_DB: "false"
       CREATE_TABLES: "true"
       SECRET_KEY: A2f158eEHjP9Df5
       ALGORITHM: HS256
@@ -128,7 +128,7 @@ jobs:
       DB_HOST: 127.0.0.1
       DB_PORT: 3306
       DB_NAME: digicheese
-      SEED_DB: "true"
+      SEED_DB: "false"
       CREATE_TABLES: "true"
       SECRET_KEY: A2f158eEHjP9Df5
       ALGORITHM: HS256
