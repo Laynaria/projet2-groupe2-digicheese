@@ -168,6 +168,11 @@ jobs:
             sleep 2
           done
 
+      - name: Debug BASE_URL
+        run: |
+          echo "BASE_URL=$BASE_URL"
+          curl -v $BASE_URL || true
+
       - name: Run k6 performances test (10 VUs)
         run: |
           mkdir -p /tmp/k6-results
@@ -184,9 +189,7 @@ jobs:
           mkdir -p performances/results
           cp /tmp/k6-results/k6_ci.json performances/results/k6_ci.json
         env:
-          BASE_URL: http://127.0.0.1:8000/
-          EMAIL: admin@digicheese.com
-          PASSWORD: ${{ secrets.API_PASSWORD }}
+          BASE_URL: BASE_URL
 
       - name: Upload performances report
         uses: actions/upload-artifact@v4
