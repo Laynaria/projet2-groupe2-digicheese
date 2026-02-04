@@ -128,11 +128,29 @@ jobs:
       DB_HOST: 127.0.0.1
       DB_PORT: 3306
       DB_NAME: digicheese
-      SEED_DB: "false"
       CREATE_TABLES: "true"
       SECRET_KEY: A2f158eEHjP9Df5
       ALGORITHM: HS256
       ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      SEED_DB: "true"
+      SEED_NB_OBJETS: 20
+      SEED_NB_CONDITIONNEMENTS: 20
+      SEED_NB_REL_COND: 20
+      SEED_NB_COMMANDES: 20
+      SEED_NB_DETAIL_COMMANDES: 20
+      SEED_NB_DETAIL_COMMANDE_OBJET: 40
+      SEED_ADMIN: "true"
+      ADMIN_EMAIL: admin@digicheese.com
+      ADMIN_PASSWORD: Admin123!
+      ADMIN_NOM: Root
+      ADMIN_PRENOM: Admin
+      SEED_COMMUNES: "true"
+      SEED_CLIENTS: "true"
+      SEED_ADRESSES: "true"
+      SEED_NB_COMMUNES: 20
+      SEED_NB_CLIENTS: 10
+      SEED_NB_ADRESSES: 30
+      SEED_USERS: "true"
 
     steps:
       - uses: actions/checkout@v4
