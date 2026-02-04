@@ -31,6 +31,9 @@ function loginAndGetToken() {
     tags: { endpoint: "/login" },
   });
 
+  console.loog(EMAIL, PASSWORD);
+  console.log(`LOGIN status=${res.status} body=${res.body}`);
+
   const ok = check(res, {
     "login returns 200": (r) => r.status === 200,
     "token present": (r) => {
