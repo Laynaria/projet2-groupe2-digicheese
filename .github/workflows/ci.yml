@@ -123,6 +123,7 @@ jobs:
           --health-retries=10
 
     env:
+      PASSWORD: Admin123!
       DB_USER: admin
       DB_PASSWORD: Admin123!
       DB_HOST: 127.0.0.1
