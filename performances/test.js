@@ -22,8 +22,6 @@ export const options = {
   },
 };
 
-console.log(EMAIL, PASSWORD);
-
 function loginAndGetToken() {
   const url = `${BASE_URL}${API_PREFIX}/auth/login`;
   const payload = JSON.stringify({ email: EMAIL, motDePasse: PASSWORD });

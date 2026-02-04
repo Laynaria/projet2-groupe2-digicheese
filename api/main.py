@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from .models import *
 from .database import engine
@@ -7,11 +8,14 @@ from .dbseed import init_seed
 app = FastAPI()
 app.include_router(router)
 
-# Import the models to create the tables in the database
-Base.metadata.create_all(engine)
+CREATE_TABLES = os.getenv("CREATE_TABLES", "true").lower() == "true"
+SEED_DB = os.getenv("SEED_DB", "false").lower() == "true"
 
-# Check if DB was already seed, and if not will seed with datas
-init_seed()
+if CREATE_TABLES:
+    Base.metadata.create_all(engine)
+
+if SEED_DB:
+    init_seed()
 
 # Define a simple root endpoint to check the connection
 @app.get("/")
