@@ -4,7 +4,7 @@ import { check, group, sleep } from "k6";
 // ---------------------------
 // Config (via -e ...)
 // ---------------------------
-const BASE_URL = __ENV.BASE_URL || "http://127.0.0.1:8000/"; // local version : "http://host.docker.internal:8000"
+const BASE_URL = __ENV.BASE_URL || "http://127.0.0.1:8000"; // local version : "http://host.docker.internal:8000"
 const EMAIL = __ENV.EMAIL || "admin@digicheese.com";
 const PASSWORD = __ENV.PASSWORD || "Admin123!";
 const API_PREFIX = __ENV.API_PREFIX || "/api/v1";
