@@ -183,6 +183,10 @@ jobs:
 
           mkdir -p performances/results
           cp /tmp/k6-results/k6_ci.json performances/results/k6_ci.json
+        env:
+          BASE_URL: http://127.0.0.1:8000/
+          EMAIL: admin@digicheese.com
+          PASSWORD: ${{ secrets.API_PASSWORD }}
 
       - name: Upload performances report
         uses: actions/upload-artifact@v4
