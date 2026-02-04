@@ -241,6 +241,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: performances-report
-          path: |
-            performances/results/k6_ci.json
-            performances/results/k6_ci_50.json
+          path: performances/results
